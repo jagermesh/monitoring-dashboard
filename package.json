@@ -37,7 +37,7 @@
   "scripts": {
     "build": "npm install && gulp build",
     "update": "npm update && gulp build",
-    "start": "node index.js",
+    "release": "np --no-2fa",
     "test": "echo \"OK\""
   },
   "version": "1.0.2"

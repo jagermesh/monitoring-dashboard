@@ -40,5 +40,5 @@
     "start": "node index.js",
     "test": "echo \"OK\""
   },
-  "version": "1.0.1"
+  "version": "1.0.2"
 }

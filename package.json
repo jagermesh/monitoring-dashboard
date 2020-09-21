@@ -1,0 +1,44 @@
+{
+  "author": {
+    "name": "Jager Mesh"
+  },
+  "bugs": {
+    "url": "https://github.com/jagermesh/monitoring-dashboard/issues"
+  },
+  "dependencies": {
+    "basic-auth": "^1.1.0",
+    "express": "^4.17.1",
+    "gulp": "^4.0.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-jshint": "^2.1.0",
+    "gulp-rename": "^1.4.0",
+    "gulp-sass": "^4.1.0",
+    "gulp-shell": "^0.7.1",
+    "gulp-terser": "^1.4.0",
+    "jshint": "^2.12.0",
+    "merge-stream": "^2.0.0",
+    "mysql": "^2.18.1",
+    "sass": "^1.26.11",
+    "socket.io": "^2.3.0",
+    "socket.io-client": "*",
+    "terser": "^4.8.0",
+    "uuid": "^3.4.0"
+  },
+  "deprecated": false,
+  "description": "Monitoring Dashboard",
+  "homepage": "https://github.com/jagermesh/monitoring-dashboard#readme",
+  "license": "MIT",
+  "main": "index.js",
+  "name": "monitoring-dashboard",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/jagermesh/monitoring-dashboard.git"
+  },
+  "scripts": {
+    "build": "npm install && gulp build",
+    "update": "npm update && gulp build",
+    "start": "node index.js",
+    "test": "echo \"OK\""
+  },
+  "version": "1.0.0"
+}

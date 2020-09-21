@@ -1,0 +1,46 @@
+@import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
+
+body {
+  font-family: 'Poppins', sans-serif;
+  padding-top: 70px;
+}
+
+.widget {
+  cursor: pointer;
+  width: 360px;
+}
+
+.widget-body {
+  overflow: auto;
+  max-height: 280px;
+  font-size: 12px;
+  font-weight: 300;
+}
+
+.widget-optimal-width {
+  width: 10px;
+  white-space: nowrap;
+}
+
+.widget-title {
+  overflow: hidden;
+  font-size: 14px;
+  height: 21px;
+  word-break: break-all;
+}
+
+.widget-sub-title {
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 300;
+  height: 18px;
+  word-break: break-all;
+}
+
+.widget-footer {
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 300;
+  height: 26px;
+  word-break: break-all;
+}

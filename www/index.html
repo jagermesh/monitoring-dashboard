@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Server Stats Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <link href="/3rdparty/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/styles.css" rel="stylesheet">
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="#">Server Stats Dashboard</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+      </ul>
+      <div class="input-group" style="width:300px;">
+        <input type="text" class="action-search form-control" placeholder="Search" aria-label="Search">
+        <div class="input-group-append">
+          <button class="action-clear-search btn btn-secondary" type="button">Clear</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      <main role="main" class="px-3">
+        <div class="widgets-container d-flex flex-wrap">
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/3rdparty/jquery/jquery.min.js"></script>
+  <script src="/3rdparty/jquery.ui/jquery-ui.min.js"></script>
+  <script src="/3rdparty/bootstrap/js/bootstrap.min.js"></script>
+  <script src="/3rdparty/handlebars/handlebars.min.js"></script>
+  <script src="/3rdparty/flot/jquery.flot.js"></script>
+  <script src="/3rdparty/socket.io/socket.io.js"></script>
+  <script src="/3rdparty/requirejs/require.js"></script>
+
+  <script src="/js/config.js"></script>
+  <script src="/js/index.js"></script>
+
+</body>
+</html>

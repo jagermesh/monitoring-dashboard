@@ -23,14 +23,13 @@ const config = {
   }
 };
 
-const hub = new MonitoringHub(config.hub);
+const hub       = new MonitoringHub(config.hub);
 const dashboard = new MonitoringDashboard(config.dashboard);
-const sensor = new MonitoringSensor(config.sensor);
+const sensor    = new MonitoringSensor(config.sensor);
 
 hub.start();
 dashboard.start();
 sensor.start();
-
 
 function sleep(delay) {
   return new Promise(function(resolve) {

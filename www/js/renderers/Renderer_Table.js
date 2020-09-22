@@ -53,7 +53,8 @@ define(function () {
         for(let i = 0; i < data.list.length; i++) {
           let text = '<tr>';
           for (var name in data.list[i].row) {
-            text += `<td>${data.list[i].row[name]}</td>`;
+            let value = $(`<span>${data.list[i].row[name]}</span>`).text();
+            text += `<td>${value}</td>`;
           }
           text += '</tr>';
           control.find('.table-body').append(text);

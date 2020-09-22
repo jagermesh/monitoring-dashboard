@@ -47,7 +47,7 @@ $(function() {
   }
 
   function removeAllSensors() {
-    widgets = widgets.map(function(widget) {
+    widgets = widgets.filter(function(widget) {
       widget.remove();
       return false;
     });

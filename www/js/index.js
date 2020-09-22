@@ -18,28 +18,27 @@ $(function() {
                     };
 
   let widgets = [];
+  let metrics = {};
 
   function registerSensor(sensorInfo) {
     sensorInfo.metricsList.map(function(metricInfo) {
       if (metricInfo.rendererName && renderers[metricInfo.rendererName]) {
         let widget = new renderers[metricInfo.rendererName](widgetsContainer, sensorInfo, metricInfo);
         widgets.push(widget);
+        metrics[metricInfo.uid] = widget;
       }
     });
   }
 
   function pushData(metricUid, metricData) {
-    widgets.map(function(widget) {
-      if (widget.__metricUid == metricUid) {
-        widget.__pushData(metricData);
-      }
-    });
+    metrics[metricUid].__pushData(metricData);
   }
 
   function removeSensor(sensorId) {
     widgets = widgets.filter(function(widget) {
       if (widget.__sensorId == sensorId) {
         widget.remove();
+        delete metrics[widget.__metricUid];
         return false;
       }
       return true;
@@ -49,6 +48,7 @@ $(function() {
   function removeAllSensors() {
     widgets = widgets.filter(function(widget) {
       widget.remove();
+      delete metrics[widget.__metricUid];
       return false;
     });
   }

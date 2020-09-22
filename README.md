@@ -1,4 +1,4 @@
-# Monitoring Sensor
+# Monitoring Dashboard
 
 ## Setup
 
@@ -6,5 +6,5 @@
 
 ```shell
 npm init
-npm install --save monitoring-sensor
+npm install --save monitoring-dashboard
 ```

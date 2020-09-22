@@ -1,5 +1,9 @@
 $(function() {
 
+  const hubUrl = config.hubUrl;
+
+  let widgetsContainer = $('div.widgets-container');
+
   function log(s) {
     if (typeof(console) != 'undefined') {
       for(let i in arguments) {
@@ -8,117 +12,82 @@ $(function() {
     }
   }
 
-  function Sensor(sensorInfo) {
+  const renderers = { LineChart: Renderer_LineChart
+                    , Progress:  Renderer_Progress
+                    , Table:     Renderer_Table
+                    };
 
-    const __this = this;
+  let widgets = [];
 
-    let __renderers = {};
-
-    let __isRemoved = false;
-
-    __this.init = function() {
-      return new Promise(function(resolve, response) {
-        let promises = sensorInfo.metricsList.map(function(metricInfo) {
-          return new Promise(function(resolve, reject) {
-            if (metricInfo.rendererName) {
-              requirejs(['js/renderers/Renderer_' + metricInfo.rendererName], function(create) {
-                if (!__this.isRemoved()) {
-                  let container = $('div.widgets-container');
-                  let renderer = new create(container, sensorInfo, metricInfo);
-                  __renderers[metricInfo.uid] = renderer;
-                }
-                resolve();
-              });
-            } else {
-              log('Outdated sensor or metric');
-              log('Sensor', sensorInfo);
-              log('Metric', metricInfo);
-            }
-          });
-        });
-
-        Promise.all(promises).then(function() {
-          $('div.widgets-container').sortable();
-          resolve();
-        });
-      });
-    };
-
-    __this.pushData = function(data) {
-      let renderer = __renderers[data.metricInfo.uid];
-      if (renderer) {
-        renderer.pushData(data.metricData);
+  function registerSensor(sensorInfo) {
+    sensorInfo.metricsList.map(function(metricInfo) {
+      if (metricInfo.rendererName && renderers[metricInfo.rendererName]) {
+        let widget = new renderers[metricInfo.rendererName](widgetsContainer, sensorInfo, metricInfo);
+        widgets.push(widget);
       }
-    };
-
-    __this.isRemoved = function() {
-      return __isRemoved;
-    };
-
-    __this.remove = function() {
-      for(let id in __renderers) {
-        let renderer = __renderers[id];
-        renderer.remove();
-      }
-      __isRemoved = true;
-    };
-
-    return __this;
-
+    });
   }
 
-  const hubUrl = config.hubUrl;
+  function pushData(metricUid, metricData) {
+    widgets.map(function(widget) {
+      if (widget.__metricUid == metricUid) {
+        widget.__pushData(metricData);
+      }
+    });
+  }
 
-  let sensors = {};
+  function removeSensor(sensorId) {
+    widgets = widgets.filter(function(widget) {
+      if (widget.__sensorId == sensorId) {
+        widget.remove();
+        return false;
+      }
+      return true;
+    });
+  }
+
+  function removeAllSensors() {
+    widgets = widgets.map(function(widget) {
+      widget.remove();
+      return false;
+    });
+  }
 
   const dataServer = io.connect(hubUrl, { reconnect: true });
-  dataServer.on('connect', function (data) {
+
+  dataServer.on('connect', function () {
     log('connect');
     dataServer.emit('registerObserver');
   });
+
   dataServer.on('sensorRegistered', function (data) {
     log('sensorRegistered', data);
-    let sensor = sensors[data.sensorInfo.id];
-    if (!sensor) {
-      let sensor = new Sensor(data.sensorInfo);
-      sensors[data.sensorInfo.id] = sensor;
-      sensor.init().then(function() {
-        filter();
-        if (sensor.isRemoved()) {
-          sensor.remove();
-        }
-      });
-    }
+    registerSensor(data.sensorInfo);
   });
+
   dataServer.on('sensorUnregistered', function (data) {
     log('sensorUnregistered', data);
-    let sensor = sensors[data.sensorInfo.id];
-    if (sensor) {
-      log(sensor);
-      sensor.remove();
-    }
+    window.setTimeout(function() {
+      removeSensor(data.sensorInfo.id);
+    });
   });
+
   dataServer.on('disconnect', function(data) {
     log('disconnect', data);
-    for(let id in sensors) {
-      sensors[id].remove();
-    }
-    sensors = {};
+    removeAllSensors();
   });
+
   dataServer.on('error', function(data) {
     log('error', data);
   });
+
   dataServer.on('sensorData', function (data) {
-    // log('sensorData', data);
-    let sensor = sensors[data.sensorInfo.id];
-    if (sensor) {
-      sensor.pushData(data);
-    }
+    pushData(data.metricInfo.uid, data.metricData);
   });
 
   function filter() {
     let keyword = $('.action-search').val().toLowerCase();
-    $('.widget').each(function() {
+    $('#mainContainer .widget').each(function() {
       let header = $('.widget-header', $(this)).text().toLowerCase();
       if (header.indexOf(keyword) == -1) {
         $(this).hide();
@@ -137,21 +106,22 @@ $(function() {
     filter();
   });
 
-  $('body').on('click', '.action-close', function() {
-    if (confirm('Do you want to hide this widget?')) {
-      $(this).closest('div.widget').hide();
-    }
+  $('#mainContainer').on('click', '.widget .widget-action-close', function(event) {
+    let widget = $(this).closest('.widget');
+    widget.removeClass('widget-detached');
+    $('body').removeClass('widget-detached-activated');
+    event.stopPropagation();
   });
 
-  $('body').on('click', '.action-expand', function() {
-    const widget = $(this).closest('div.widget');
-    if (widget.hasClass('widget-card')) {
-      $(this).closest('div.widget').addClass('widget-wide').removeClass('widget-card');
-      $(this).text('<');
-    } else {
-      $(this).closest('div.widget').addClass('widget-card').removeClass('widget-wide');
-      $(this).text('>');
-    }
+  $('#mainContainer').on('click', '.widget', function() {
+    let widget = $(this).closest('.widget');
+    widget.addClass('widget-detached');
+    $('body').addClass('widget-detached-activated');
+  });
+
+  $('#backDrop').on('click', function() {
+    $('.widget-detached').removeClass('widget-detached');
+    $('body').removeClass('widget-detached-activated');
   });
 
 });

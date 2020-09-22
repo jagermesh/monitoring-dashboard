@@ -1,140 +1,125 @@
-/* global define */
+function Renderer_LineChart(container, sensorInfo, metricInfo, settings) {
 
-define(function () {
+  Renderer_Custom.call(this, container, sensorInfo, metricInfo, settings);
 
-  return function(container, sensorInfo, metricInfo) {
+  const _this = this;
 
-    const _this = this;
+  const bodyTemplate = Handlebars.compile(`
+    <div class="chart" style="width:356px;height:280px;">
+    </div>
+  `);
 
-    const template = Handlebars.compile(`
-      <div class="widget card mb-3 mr-3" data-ip="{{sensorInfo.address}}" data-uid="{{metricInfo.uid}}" data-metric-name="{{metricInfo.name}}">
-        <div class="widget-header card-header pl-2 pt-1 pb-1 pr-2">
-          <div class="widget-title"></div>
-          <div class="widget-sub-title"></div>
-        </div>
-        <div class="widget-body card-body m-0 p-0">
-           <div class="chart" style="height:280px;"></div>
-        </div>
-        <div class="widget-footer card-footer pl-2 pt-1 pb-1 pr-2">
-          {{sensorInfo.address}}
-        </div>
-      </div>`);
+  let widgetContainer = $(_this.widgetContainer);
 
-    const control = $(template({ sensorInfo: sensorInfo, metricInfo: metricInfo }));
-    $(container).append(control);
+  widgetContainer.find('.widget-body').append(bodyTemplate());
 
-    const selector = control.find('.chart');
+  const control_Title    = widgetContainer.find('.widget-title');
+  const control_SubTitle = widgetContainer.find('.widget-sub-title');
+  const control_Chart    = widgetContainer.find('.widget-body').find('.chart');
 
-    const maxPeriod = 120;
+  const maxPeriod = 120;
 
-    let statData = [];
+  let statData = [];
 
-    function getPlotData() {
-      let res = [];
-      for (let i = 0; i < maxPeriod; i++) {
-        if (statData[i] !== undefined) {
+  function getPlotData() {
+    let res = [];
+    for (let i = 0; i < maxPeriod; i++) {
+      if (statData[i] !== undefined) {
+        res.push([ i, statData[i].value ]);
+      } else {
+        res.push([ i, null ]);
+      }
+    }
+    return res;
+  }
+
+  function getFakeData(value) {
+    let res = [];
+    for (let i = 0; i < maxPeriod; i++) {
+      if (statData[i] !== undefined) {
+        if (statData[i].value > value) {
           res.push([ i, statData[i].value ]);
         } else {
           res.push([ i, null ]);
         }
+      } else {
+        res.push([ i, null ]);
       }
-      return res;
     }
+    return res;
+  }
 
-    function getFakeData(value) {
-      let res = [];
-      for (let i = 0; i < maxPeriod; i++) {
-        if (statData[i] !== undefined) {
-          if (statData[i].value > value) {
-            res.push([ i, statData[i].value ]);
-          } else {
-            res.push([ i, null ]);
-          }
-        } else {
-          res.push([ i, null ]);
-        }
-      }
-      return res;
+  function getData() {
+    let result = [];
+    let label = '';
+    if ((statData.length > 0) && statData[statData.length-1].label) {
+      label = statData[statData.length-1].label;
     }
-
-    function getData() {
-      let result = [];
-      let label = '';
-      if ((statData.length > 0) && statData[statData.length-1].label) {
-        label = statData[statData.length-1].label;
+    result.push({ data: getPlotData()
+                , lines: { fill: true }
+                , color: 'green'
+                , label: label
+                });
+    if (metricInfo.metricConfig.ranges) {
+      for(let i = 0; i < metricInfo.metricConfig.ranges.length; i++) {
+        result.push({ data: getFakeData(metricInfo.metricConfig.ranges[i].value)
+                    , lines: { fill: true }
+                    , color: metricInfo.metricConfig.ranges[i].color
+                    , label: metricInfo.metricConfig.ranges[i].title
+                    });
       }
-      result.push({ data: getPlotData()
-                  , lines: { fill: true }
-                  , color: 'green'
-                  , label: label
-                  });
-      if (metricInfo.metricConfig.ranges) {
-        for(let i = 0; i < metricInfo.metricConfig.ranges.length; i++) {
-          result.push({ data: getFakeData(metricInfo.metricConfig.ranges[i].value)
-                      , lines: { fill: true }
-                      , color: metricInfo.metricConfig.ranges[i].color
-                      , label: metricInfo.metricConfig.ranges[i].title
-                      });
-        }
-      }
-      return result;
-
     }
+    return result;
+  }
 
-    const plot = $.plot( selector
-                       , getData()
-                       , { grid: { borderWidth: 1
-                                 , minBorderMargin: 20
-                                 , labelMargin: 10
-                                 , backgroundColor: {
-                                     colors: ["#fff", "#e4f4f4"]
-                                   }
-                                 , margin: { top: 8
-                                           , bottom: 20
-                                           , left: 20
-                                           }
+  const plot = $.plot( control_Chart
+                     , getData()
+                     , { grid: { borderWidth:     1
+                               , minBorderMargin: 20
+                               , labelMargin:     10
+                               , backgroundColor: {
+                                   colors: ["#fff", "#e4f4f4"]
                                  }
-                         , yaxis: {
-                             min: 0
-                           }
-                         , legend: {
-                               show: true
-                             , backgroundOpacity: 0.5
-                             , position: 'sw'
-                           }
-                         });
+                               , margin: { top:    8
+                                         , bottom: 20
+                                         , left:   20
+                                         }
+                               }
+                       , yaxis: {
+                            min: 0
+                         }
+                       , legend: {
+                           show: true
+                         , backgroundOpacity: 0.5
+                         , position: 'sw'
+                         }
+                       });
 
-    function draw() {
-      plot.setData(getData());
-      plot.setupGrid();
-      plot.draw();
+  function draw() {
+    plot.setData(getData());
+    plot.setupGrid();
+    plot.draw();
+  }
+
+  $(window).on('resize', function() {
+    try {
+      plot.resize();
+      this.draw();
+    } catch (e) {
+
     }
+  });
 
-    _this.remove = function() {
-      control.remove();
-    };
-
-    _this.pushData = function(data) {
-      control.find('.widget-title').html(data.title);
-      control.find('.widget-sub-title').html(data.subTitle);
-      while (statData.length > maxPeriod) {
-        statData = statData.slice(1);
-      }
-      statData.push(data);
-      draw();
-    };
-
-    $(window).on('resize', function() {
-      try {
-        plot.resize();
-        this.draw();
-      } catch (e) {
-
-      }
-    });
-
-    return _this;
-
+  _this.widgetContainer.__pushData = function(data) {
+    control_Title.html(data.title);
+    control_SubTitle.html(data.subTitle);
+    while (statData.length > maxPeriod) {
+      statData = statData.slice(1);
+    }
+    statData.push(data);
+    draw();
   };
 
-});
+  return _this.widgetContainer;
+
+}

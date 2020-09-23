@@ -87,12 +87,19 @@ $(function() {
 
   function filter() {
     let keyword = $('.action-search').val().toLowerCase();
+    let rendererName = $('.action-filter-by-renderer-name.active').attr('data-renderer-name');
+    console.log(rendererName);
     $('#mainContainer .widget').each(function() {
       let header = $('.widget-header', $(this)).text().toLowerCase();
       if (header.indexOf(keyword) == -1) {
         $(this).hide();
       } else {
-        $(this).show();
+        let currentRendererName = $(this).attr('data-renderer-name');
+        if ((rendererName.length === 0) || (currentRendererName == rendererName)) {
+          $(this).show();
+        } else {
+          $(this).hide();
+        }
       }
     });
   }
@@ -100,6 +107,12 @@ $(function() {
   $('.action-clear-search').on('click', function() {
     $('.action-search').val('');
     filter();
+  });
+
+  $('.action-filter-by-renderer-name').on('click', function() {
+    window.setTimeout(function() {
+      filter();
+    });
   });
 
   $('.action-search').on('keyup', function() {

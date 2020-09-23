@@ -5,7 +5,7 @@ function Renderer_LineChart(container, sensorInfo, metricInfo, settings) {
   const _this = this;
 
   const bodyTemplate = Handlebars.compile(`
-    <div class="chart" style="width:356px;height:280px;">
+    <div class="chart" style="width:350px;height:280px;">
     </div>
   `);
 

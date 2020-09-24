@@ -1,6 +1,6 @@
 $(function() {
 
-  const hubUrl = config.hubUrl;
+  const backEndUrl = config.backendUrl;
 
   let widgetsContainer = $('div.widgets-container');
 
@@ -53,36 +53,29 @@ $(function() {
     });
   }
 
-  const dataServer = io.connect(hubUrl, { reconnect: true });
+  const dataServer = io.connect(backEndUrl, { reconnect: true });
 
   dataServer.on('connect', function () {
     log('connect');
     dataServer.emit('registerObserver');
   });
-
   dataServer.on('sensorRegistered', function (data) {
     log('sensorRegistered', data);
     registerSensor(data.sensorInfo);
   });
-
   dataServer.on('sensorUnregistered', function (data) {
     log('sensorUnregistered', data);
     window.setTimeout(function() {
       removeSensor(data.sensorInfo.id);
     });
   });
-
+  dataServer.on('sensorData', function (data) {
+    // console.log(data);
+    pushData(data.metricUid, data.metricData);
+  });
   dataServer.on('disconnect', function(data) {
     log('disconnect', data);
     removeAllSensors();
-  });
-
-  dataServer.on('error', function(data) {
-    log('error', data);
-  });
-
-  dataServer.on('sensorData', function (data) {
-    pushData(data.metricInfo.uid, data.metricData);
   });
 
   function filter() {

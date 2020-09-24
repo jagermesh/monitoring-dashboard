@@ -15,7 +15,8 @@
   },
   "dependencies": {
     "express": "^4.17.1",
-    "basic-auth": "^1.1.0"
+    "basic-auth": "^1.1.0",
+    "colors": "*"
   },
   "deprecated": false,
   "description": "Monitoring Dashboard",

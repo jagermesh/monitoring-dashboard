@@ -26,17 +26,17 @@ module.exports = function(config) {
 
   _this.start = function() {
 
-    _this.log('Starting data server');
-
-    let observers = {};
-    let sensors         = {};
-    let sensorDataCache = {};
+    let observers       = Object.create({ });
+    let sensors         = Object.create({ });
+    let sensorDataCache = Object.create({ });
 
     // Backend
 
     _this.log('Starting backend server');
+    _this.log(`Connecting to hub at ${_this.config.hubUrl}`);
 
     const backEndServer = socketServer.listen(_this.config.backEndPort, { log: false });
+    const hubServer = socketClient.connect(_this.config.hubUrl, { reconnect: true });
 
     backEndServer.on('connection', function (socket) {
       let connectionInfo = { id:      socket.id
@@ -48,6 +48,11 @@ module.exports = function(config) {
         _this.log('Observer registration request received ' + JSON.stringify(observerInfo));
         observers[connectionInfo.id] = { socket: socket, observerInfo: observerInfo, isActive: true};
         socket.emit('observerRegistered', { observerInfo: observerInfo });
+        if (hubServer.connected) {
+          socket.emit('hubOnline');
+        } else {
+          socket.emit('hubOffline');
+        }
         _this.log('Observer registered: ' + JSON.stringify(observerInfo));
 
         setTimeout(function() {
@@ -108,7 +113,11 @@ module.exports = function(config) {
     });
 
     app.get('/js/config.js', function(req, res){
-      const body = `config = { backendUrl: "${_this.config.backEndUrl}" }`;
+      const body = `
+        define(function (require) {
+          return { backendUrl: "${_this.config.backEndUrl}" };
+        });
+      `;
       res.setHeader('Content-Type', 'text/javascript');
       res.setHeader('Content-Length', body.length);
       res.end(body);
@@ -122,13 +131,12 @@ module.exports = function(config) {
 
     // Hub
 
-    _this.log(`Connecting to hub at ${_this.config.hubUrl}`);
-
-    const hubServer = socketClient.connect(_this.config.hubUrl, { reconnect: true });
-
     hubServer.on('connect', function () {
       _this.log(`Connected to hub`);
       hubServer.emit('registerObserver');
+      for(let observerId in observers) {
+        observers[observerId].socket.emit('hubOnline');
+      }
     });
     hubServer.on('sensorRegistered', function (data) {
       let sensorInfo = Object.assign({}, data.sensorInfo);
@@ -160,6 +168,7 @@ module.exports = function(config) {
           let sensor = sensors[sensorUid];
           observers[observerId].socket.emit('sensorUnregistered', { sensorInfo: sensor.sensorInfo });
         }
+        observers[observerId].socket.emit('hubOffline');
       }
     });
 

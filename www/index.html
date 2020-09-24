@@ -2,15 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Server Stats Dashboard</title>
+  <title>Monitoring Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
   <link href="/3rdparty/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/3rdparty/fontawesome/css/all.min.css" rel="stylesheet">
   <link href="/css/styles.css" rel="stylesheet">
 </head>
 <body>
   <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <a class="navbar-brand" href="#">Server Stats Dashboard</a>
+    <a id="connectionStatus" class="navbar-brand hub-disconnected" href="javascript:;"><i class="fas fa-wifi"></i></a>
+    <a class="navbar-brand" href="javascript:;">Monitoring Dashboard</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -20,7 +22,7 @@
         <li class="nav-item" role="presentation"><a class="nav-link action-filter-by-renderer-name active" id="Renderer_All"       data-toggle="pill" href="javascript:;" role="tab" aria-controls="Renderer_All"       data-renderer-name=""          aria-selected="true">All metrics</a></li>
         <li class="nav-item" role="presentation"><a class="nav-link action-filter-by-renderer-name"        id="Renderer_LineChart" data-toggle="pill" href="javascript:;" role="tab" aria-controls="Renderer_LineChart" data-renderer-name="LineChart" aria-selected="false">Charts</a></li>
         <li class="nav-item" role="presentation"><a class="nav-link action-filter-by-renderer-name"        id="Renderer_Table"     data-toggle="pill" href="javascript:;" role="tab" aria-controls="Renderer_Table"     data-renderer-name="Table"     aria-selected="false">Lists</a></li>
-        <li class="nav-item" role="presentation"><a class="nav-link action-filter-by-renderer-name"        id="Renderer_Progress"  data-toggle="pill" href="javascript:;" role="tab" aria-controls="Renderer_Progress"  data-renderer-name="Progress"  aria-selected="false">Long term operations</a></li>
+        <li class="nav-item" role="presentation"><a class="nav-link action-filter-by-renderer-name"        id="Renderer_Progress"  data-toggle="pill" href="javascript:;" role="tab" aria-controls="Renderer_Progress"  data-renderer-name="Progress"  aria-selected="false">Progress</a></li>
       </ul>
 
       <div class="input-group" style="width:300px;">
@@ -61,6 +63,9 @@
 
   <div id="backDrop" class="widget-backdrop">&nbsp;</div>
 
+  <script src="/js/config.js"></script>
+
+<!--
   <script src="/3rdparty/jquery/jquery.min.js"></script>
   <script src="/3rdparty/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="/3rdparty/handlebars/handlebars.min.js"></script>
@@ -68,11 +73,13 @@
   <script src="/3rdparty/socket.io/socket.io.js"></script>
   <script src="/3rdparty/requirejs/require.js"></script>
 
-  <script src="/js/renderers/Renderer_Custom.js"></script>
-  <script src="/js/renderers/Renderer_LineChart.js"></script>
-  <script src="/js/renderers/Renderer_Progress.js"></script>
-  <script src="/js/renderers/Renderer_Table.js"></script>
-  <script src="/js/config.js"></script>
-  <script src="/js/index.js"></script>
+  <script src="/js/src/renderers/Renderer_Custom.js"></script>
+  <script src="/js/src/renderers/Renderer_LineChart.js"></script>
+  <script src="/js/src/renderers/Renderer_Progress.js"></script>
+  <script src="/js/src/renderers/Renderer_Table.js"></script>
+  <script src="/js/src/index.js"></script>
+ -->
+
+  <script src="/js/dist/bundle.min.js"></script>
 </body>
 </html>

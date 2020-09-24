@@ -92,3 +92,11 @@ body.widget-detached-activated .widget-backdrop {
     width: initial;
   }
 }
+
+.hub-disconnected i {
+  color: red;
+}
+
+.hub-connected i {
+  color: green;
+}

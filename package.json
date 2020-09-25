@@ -7,16 +7,16 @@
   },
   "devDependencies": {
     "gulp": "^4.0.2",
-    "gulp-jshint": "^2.1.0",
     "gulp-concat": "^2.6.1",
-    "gulp-terser": "^1.4.0",
+    "gulp-jshint": "^2.1.0",
     "gulp-rename": "^1.4.0",
-    "terser": "^4.8.0",
-    "merge-stream": "^2.0.0",
+    "gulp-terser": "^1.4.0",
     "jshint": "^2.12.0",
-    "monitoring-hub": "^1.0.6",
-    "monitoring-progress-logger": "^1.0.5",
-    "monitoring-sensor": "^1.0.4"
+    "merge-stream": "^2.0.0",
+    "monitoring-hub": "^1.0.8",
+    "monitoring-progress-logger": "^1.0.7",
+    "monitoring-sensor": "^1.0.6",
+    "terser": "^4.8.0"
   },
   "dependencies": {
     "basic-auth": "^1.1.0",

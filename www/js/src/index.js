@@ -32,7 +32,10 @@ $(function() {
     }
 
     function pushData(metricUid, metricData) {
-      metrics[metricUid].__pushData(metricData);
+      let metric = metrics[metricUid];
+      if (metric) {
+        metric.__pushData(metricData);
+      }
     }
 
     function removeSensor(sensorId) {

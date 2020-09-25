@@ -163,13 +163,15 @@ module.exports = function(config) {
       }
     });
     hubServer.on('sensorUnregistered', function (data) {
-      let sensorInfo = sensors[data.sensorInfo.sensorUid];
+      let sensor = sensors[data.sensorInfo.sensorUid];
       delete sensors[data.sensorInfo.sensorUid];
-      _this.log('Sensor disconnected', { sensorUid: sensorInfo.sensorUid });
-      for(let observerId in observers) {
-        let observer = observers[observerId];
-        _this.log('Informing observer about sensor disconnection',  { sensorUid: sensorInfo.sensorUid, observerId: observer.observerInfo.observerId });
-        observers[observerId].socket.emit('sensorUnregistered', { sensorInfo: sensorInfo });
+      if (sensor) {
+        _this.log('Sensor disconnected', { sensorUid: sensor.sensorInfo.sensorUid });
+        for(let observerId in observers) {
+          let observer = observers[observerId];
+          _this.log('Informing observer about sensor disconnection',  { sensorUid: sensor.sensorInfo.sensorUid, observerId: observer.observerInfo.observerId });
+          observer.socket.emit('sensorUnregistered', { sensorInfo: sensor.sensorInfo });
+        }
       }
     });
     hubServer.on('disconnect', function(data) {
@@ -179,6 +181,7 @@ module.exports = function(config) {
         let observer = observers[observerId];
         for(let sensorUid in sensors) {
           let sensor = sensors[sensorUid];
+          delete sensors[sensorUid];
           _this.log('Informing observer about sensor disconnection',  { sensorUid: sensor.sensorInfo.sensorUid, observerId: observer.observerInfo.observerId });
           observers[observerId].socket.emit('sensorUnregistered', { sensorInfo: sensor.sensorInfo });
         }

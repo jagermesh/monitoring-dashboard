@@ -44,7 +44,7 @@ function Renderer_FilledLineChart(container, sensorInfo, metricInfo, settings) {
     };
     if (last) {
       if (metricInfo.metricConfig.ranges) {
-        for(let i = 0; i < metricInfo.metricConfig.ranges.length; i++) {
+        for(let i = metricInfo.metricConfig.ranges.length-1; i >= 0; i--) {
           if (last >= metricInfo.metricConfig.ranges[i].value) {
             result.lineColor = metricInfo.metricConfig.ranges[i].lineColor;
             result.fillColor = metricInfo.metricConfig.ranges[i].fillColor;

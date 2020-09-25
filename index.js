@@ -71,10 +71,13 @@ module.exports = function(config) {
           }
           setTimeout(function() {
             _this.log('Sending sensors data to observer');
-            for (let sensorUid in sensorDataCache) {
-              let sensorData = sensorDataCache[sensorUid];
-              _this.log('Sending sensor data to observer',  { sensorUid: sensorData.sensorUid, metricUid: sensorData.metricUid, observerId: observerInfo.observerId });
-              socket.emit('sensorData', sensorData);
+            for (let sensorId in sensors) {
+              let sensor = sensors[sensorId];
+              let sensorData = sensorDataCache[sensor.sensorInfo.sensorUid];
+              if (sensorData) {
+                _this.log('Sending sensor data to observer',  { sensorUid: sensor.sensorInfo.sensorUid, metricUid: sensorData.metricUid, observerId: observerInfo.observerId });
+                socket.emit('sensorData', sensorData);
+              }
             }
           });
         });
@@ -165,6 +168,7 @@ module.exports = function(config) {
     hubServer.on('sensorUnregistered', function (data) {
       let sensor = sensors[data.sensorInfo.sensorUid];
       delete sensors[data.sensorInfo.sensorUid];
+      delete sensorDataCache[data.sensorInfo.sensorUid];
       if (sensor) {
         _this.log('Sensor disconnected', { sensorUid: sensor.sensorInfo.sensorUid });
         for(let observerId in observers) {

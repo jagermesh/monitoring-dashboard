@@ -1,6 +1,6 @@
 function Renderer_Progress(container, sensorInfo, metricInfo, settings) {
 
-  Renderer_Custom.call(this, container, sensorInfo, metricInfo, settings);
+  Renderer_Custom.call(this, container, sensorInfo, metricInfo, { rendererType: 'Progress' });
 
   const _this = this;
 

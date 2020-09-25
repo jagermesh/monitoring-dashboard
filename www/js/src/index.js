@@ -12,9 +12,10 @@ $(function() {
       }
     }
 
-    const renderers = { LineChart: Renderer_LineChart
-                      , Progress:  Renderer_Progress
-                      , Table:     Renderer_Table
+    const renderers = { LineChart:       Renderer_LineChart
+                      , FilledLineChart: Renderer_FilledLineChart
+                      , Progress:        Renderer_Progress
+                      , Table:           Renderer_Table
                       };
 
     let widgets = [];
@@ -97,14 +98,14 @@ $(function() {
 
     function filter() {
       let keyword = $('.action-search').val().toLowerCase();
-      let rendererName = $('.action-filter-by-renderer-name.active').attr('data-renderer-name');
+      let rendererName = $('.action-filter-by-renderer-type.active').attr('data-renderer-type');
       console.log(rendererName);
       $('#mainContainer .widget').each(function() {
         let header = $('.widget-header', $(this)).text().toLowerCase();
         if (header.indexOf(keyword) == -1) {
           $(this).hide();
         } else {
-          let currentRendererName = $(this).attr('data-renderer-name');
+          let currentRendererName = $(this).attr('data-renderer-type');
           if ((rendererName.length === 0) || (currentRendererName == rendererName)) {
             $(this).show();
           } else {
@@ -119,7 +120,7 @@ $(function() {
       filter();
     });
 
-    $('.action-filter-by-renderer-name').on('click', function() {
+    $('.action-filter-by-renderer-type').on('click', function() {
       window.setTimeout(function() {
         filter();
       });

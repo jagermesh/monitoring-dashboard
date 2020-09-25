@@ -1,6 +1,6 @@
 function Renderer_LineChart(container, sensorInfo, metricInfo, settings) {
 
-  Renderer_Custom.call(this, container, sensorInfo, metricInfo, settings);
+  Renderer_Custom.call(this, container, sensorInfo, metricInfo, { rendererType: 'Chart' });
 
   const _this = this;
 
@@ -57,14 +57,14 @@ function Renderer_LineChart(container, sensorInfo, metricInfo, settings) {
     }
     result.push({ data: getPlotData()
                 , lines: { fill: true }
-                , color: 'green'
+                , color: metricInfo.metricConfig.lineColor
                 , label: label
                 });
     if (metricInfo.metricConfig.ranges) {
       for(let i = 0; i < metricInfo.metricConfig.ranges.length; i++) {
         result.push({ data: getFakeData(metricInfo.metricConfig.ranges[i].value)
                     , lines: { fill: true }
-                    , color: metricInfo.metricConfig.ranges[i].color
+                    , color: metricInfo.metricConfig.ranges[i].lineColor
                     , label: metricInfo.metricConfig.ranges[i].title
                     });
       }
@@ -78,7 +78,7 @@ function Renderer_LineChart(container, sensorInfo, metricInfo, settings) {
                                , minBorderMargin: 20
                                , labelMargin:     10
                                , backgroundColor: {
-                                   colors: ["#fff", "#e4f4f4"]
+                                   colors: [ '#fff', '#e4f4f4' ]
                                  }
                                , margin: { top:    8
                                          , bottom: 20

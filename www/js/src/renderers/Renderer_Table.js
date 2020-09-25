@@ -1,6 +1,6 @@
 function Renderer_Table(container, sensorInfo, metricInfo, settings) {
 
-  Renderer_Custom.call(this, container, sensorInfo, metricInfo, settings);
+  Renderer_Custom.call(this, container, sensorInfo, metricInfo, { rendererType: 'List' });
 
   const _this = this;
 

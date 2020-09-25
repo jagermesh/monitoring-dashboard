@@ -13,9 +13,9 @@
     "gulp-terser": "^1.4.0",
     "jshint": "^2.12.0",
     "merge-stream": "^2.0.0",
-    "monitoring-hub": "^1*",
-    "monitoring-progress-logger": "^1*",
-    "monitoring-sensor": "^1*",
+    "monitoring-hub": "^1",
+    "monitoring-progress-logger": "^1",
+    "monitoring-sensor": "^1",
     "terser": "^4.8.0"
   },
   "dependencies": {
@@ -44,7 +44,7 @@
   "scripts": {
     "build": "npm install && gulp build",
     "update": "npm update && gulp build",
-    "release": "npm install && gulp build && np --no-2fa",
+    "publish": "npm install && gulp build && np --no-2fa",
     "test": "echo \"OK\""
   },
   "version": "1.0.12"

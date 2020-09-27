@@ -185,9 +185,9 @@ module.exports = function(config) {
       _this.log('Informing observers about sensor disconnection');
       for(let observerId in observers) {
         let observer = observers[observerId];
-        for(let sensorId in sensors) {
-          let sensor = sensors[sensorId];
-          delete sensors[sensorId];
+        for(let sensorUid in sensors) {
+          let sensor = sensors[sensorUid];
+          delete sensors[sensorUid];
           _this.log('Informing observer about sensor disconnection',  { sensorUid: sensor.sensorInfo.sensorUid, observerId: observer.observerInfo.observerId });
           observer.socket.emit('sensorUnregistered', { sensorInfo: sensor.sensorInfo });
         }

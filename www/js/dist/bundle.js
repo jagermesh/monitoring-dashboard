@@ -8440,7 +8440,7 @@ function Renderer_Custom(container, sensorInfo, metricInfo, settings) {
 
   _this.widgetContainer = widgetContainer[0];
 
-  _this.widgetContainer.__sensorId  = sensorInfo.id;
+  _this.widgetContainer.__sensorUid = sensorInfo.sensorUid;
   _this.widgetContainer.__metricUid = metricInfo.uid;
 
   _this.widgetContainer.__pushData  = function() { };
@@ -8807,10 +8807,12 @@ $(function() {
 
     function registerSensor(sensorInfo) {
       sensorInfo.metricsList.map(function(metricInfo) {
-        if (metricInfo.rendererName && renderers[metricInfo.rendererName]) {
-          let widget = new renderers[metricInfo.rendererName](widgetsContainer, sensorInfo, metricInfo);
-          widgets.push(widget);
-          metrics[metricInfo.uid] = widget;
+        if (!metrics[metricInfo.uid]) {
+          if (metricInfo.rendererName && renderers[metricInfo.rendererName]) {
+            let widget = new renderers[metricInfo.rendererName](widgetsContainer, sensorInfo, metricInfo);
+            widgets.push(widget);
+            metrics[metricInfo.uid] = widget;
+          }
         }
       });
     }
@@ -8822,9 +8824,9 @@ $(function() {
       }
     }
 
-    function removeSensor(sensorId) {
+    function removeSensor(sensorUid) {
       widgets = widgets.filter(function(widget) {
-        if (widget.__sensorId == sensorId) {
+        if (widget.__sensorUid == sensorUid) {
           widget.remove();
           delete metrics[widget.__metricUid];
           return false;
@@ -8870,7 +8872,7 @@ $(function() {
     dataServer.on('sensorUnregistered', function (data) {
       log('sensorUnregistered', data);
       window.setTimeout(function() {
-        removeSensor(data.sensorInfo.id);
+        removeSensor(data.sensorInfo.sensorUid);
       });
     });
     dataServer.on('sensorData', function (data) {

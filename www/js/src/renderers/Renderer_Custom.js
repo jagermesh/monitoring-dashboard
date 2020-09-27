@@ -29,7 +29,7 @@ function Renderer_Custom(container, sensorInfo, metricInfo, settings) {
 
   _this.widgetContainer = widgetContainer[0];
 
-  _this.widgetContainer.__sensorId  = sensorInfo.id;
+  _this.widgetContainer.__sensorUid = sensorInfo.sensorUid;
   _this.widgetContainer.__metricUid = metricInfo.uid;
 
   _this.widgetContainer.__pushData  = function() { };

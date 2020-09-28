@@ -13,9 +13,9 @@
     "gulp-terser": "^1.4.0",
     "jshint": "^2.12.0",
     "merge-stream": "^2.0.0",
-    "monitoring-hub": "^1",
-    "monitoring-progress-logger": "^1",
-    "monitoring-sensor": "^1",
+    "monitoring-hub": "^1.0.16",
+    "monitoring-progress-logger": "^1.0.11",
+    "monitoring-sensor": "^1.0.12",
     "terser": "^4.8.0"
   },
   "dependencies": {

@@ -84,6 +84,7 @@ $(function() {
     dataServer.on('sensorRegistered', function (data) {
       log('sensorRegistered', data);
       registerSensor(data.sensorInfo);
+      filter();
     });
     dataServer.on('sensorUnregistered', function (data) {
       log('sensorUnregistered', data);
@@ -106,8 +107,8 @@ $(function() {
       let rendererName = $('.action-filter-by-renderer-type.active').attr('data-renderer-type');
       console.log(rendererName);
       $('#mainContainer .widget').each(function() {
-        let header = $('.widget-header', $(this)).text().toLowerCase();
-        if (header.indexOf(keyword) == -1) {
+        let scope = $('.widget-header', $(this)).text().toLowerCase() + ' ' + $('.widget-footer', $(this)).text().toLowerCase();
+        if (scope.indexOf(keyword) == -1) {
           $(this).hide();
         } else {
           let currentRendererName = $(this).attr('data-renderer-type');

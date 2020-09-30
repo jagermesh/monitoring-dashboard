@@ -12,8 +12,7 @@ $(function() {
       }
     }
 
-    const renderers = { LineChart:       Renderer_LineChart
-                      , FilledLineChart: Renderer_FilledLineChart
+    const renderers = { Chart:           Renderer_Chart
                       , Progress:        Renderer_Progress
                       , Table:           Renderer_Table
                       };
@@ -93,7 +92,7 @@ $(function() {
       });
     });
     dataServer.on('sensorData', function (data) {
-      // console.log(data);
+      // log(data);
       pushData(data.metricUid, data.metricData);
     });
     dataServer.on('disconnect', function(data) {
@@ -105,7 +104,6 @@ $(function() {
     function filter() {
       let keyword = $('.action-search').val().toLowerCase();
       let rendererName = $('.action-filter-by-renderer-type.active').attr('data-renderer-type');
-      console.log(rendererName);
       $('#mainContainer .widget').each(function() {
         let scope = $('.widget-header', $(this)).text().toLowerCase() + ' ' + $('.widget-footer', $(this)).text().toLowerCase();
         if (scope.indexOf(keyword) == -1) {

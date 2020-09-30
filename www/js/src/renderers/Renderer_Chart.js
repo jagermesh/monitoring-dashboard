@@ -43,6 +43,13 @@ function Renderer_Chart(container, sensorInfo, metricInfo, settings) {
     metricInfo.metricConfig.fillColor = color.fillColor;
   }
 
+  if (metricInfo.metricConfig.ranges) {
+    metricInfo.metricConfig.ranges.map(function(range) {
+      let color = new RGBColor(range.lineColor);
+      range.fillColor = `rgb(${color.r},${color.g},${color.b},${opacity})`;
+    });
+  }
+
   function randomColor() {
     const r = Math.floor(Math.random() * 255);
     const g = Math.floor(Math.random() * 255);
@@ -52,13 +59,14 @@ function Renderer_Chart(container, sensorInfo, metricInfo, settings) {
 
   const chartDataSets = [];
 
-  metricInfo.metricConfig.datasets.map(function(dataset) {
+  metricInfo.metricConfig.datasets.map(function(dataset, index) {
     let color = randomColor();
     chartDataSets.push({ data:            []
                        , label:           dataset
-                       , borderColor:     (isMultipleDataSets ? color.lineColor : metricInfo.metricConfig.lineColor)
-                       , backgroundColor: (isMultipleDataSets ? color.fillColor : metricInfo.metricConfig.fillColor)
-                       , fill:            (isMultipleDataSets ? false : 'start')
+                       , borderColor:     (index == 0 ? metricInfo.metricConfig.lineColor : color.lineColor)
+                       , backgroundColor: (index == 0 ? metricInfo.metricConfig.fillColor : color.fillColor)
+                       , fill:            (index == 0 ? 'start' : false)
+                       , borderWidth:     2
                        });
   });
 
@@ -69,11 +77,28 @@ function Renderer_Chart(container, sensorInfo, metricInfo, settings) {
       item.data = [];
     });
 
+    let last = 0;
+
     statData.map(function(values) {
       values.map(function(value, index) {
         result[index].data.push(value);
+        if (index === 0) {
+          last = value;
+        }
       });
     });
+
+    if (last) {
+      if (metricInfo.metricConfig.ranges) {
+        for(let i = metricInfo.metricConfig.ranges.length-1; i >= 0; i--) {
+          if (last >= metricInfo.metricConfig.ranges[i].value) {
+            result[0].borderColor = metricInfo.metricConfig.ranges[i].lineColor;
+            result[0].backgroundColor = metricInfo.metricConfig.ranges[i].fillColor;
+            break;
+          }
+        }
+      }
+    }
 
     return result;
   }

@@ -8824,16 +8824,24 @@ function Renderer_Chart(container, sensorInfo, metricInfo, settings) {
       });
     });
 
+    let found = false;
+
     if (last) {
       if (metricInfo.metricConfig.ranges) {
         for(let i = metricInfo.metricConfig.ranges.length-1; i >= 0; i--) {
           if (last >= metricInfo.metricConfig.ranges[i].value) {
             result[0].borderColor = metricInfo.metricConfig.ranges[i].lineColor;
             result[0].backgroundColor = metricInfo.metricConfig.ranges[i].fillColor;
+            found  = true;
             break;
           }
         }
       }
+    }
+
+    if (!found) {
+      result[0].borderColor = metricInfo.metricConfig.lineColor;
+      result[0].backgroundColor = metricInfo.metricConfig.fillColor;
     }
 
     return result;

@@ -134,6 +134,12 @@ $(function() {
       filter();
     });
 
+    $('.action-switch-theme').on('click', function() {
+      $('.action-switch-theme').removeClass('active');
+      $(this).addClass('active');
+      $('body').attr('data-theme', $(this).attr('data-theme'));
+    });
+
     $('#mainContainer').on('click', '.widget .widget-action-close', function(event) {
       let widget = $(this).closest('.widget');
       widget.removeClass('widget-detached');

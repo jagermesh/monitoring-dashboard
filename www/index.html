@@ -9,28 +9,32 @@
   <link href="/3rdparty/fontawesome/css/all.min.css" rel="stylesheet">
   <link href="/css/styles.css" rel="stylesheet">
 </head>
-<body>
+<body data-theme="dark">
   <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
     <a id="connectionStatus" class="navbar-brand hub-disconnected" href="javascript:;"><i class="fas fa-wifi"></i></a>
     <a class="navbar-brand" href="javascript:;">Monitoring Dashboard</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-
+    <div class="collapse navbar-collapse" id="navbarMain">
       <ul class="nav nav-pills navbar-nav mr-auto" id="pills-tab" role="tablist">
         <li class="nav-item" role="presentation"><a class="nav-link action-filter-by-renderer-type active" id="Renderer_All"       data-toggle="pill" href="javascript:;" role="tab" aria-controls="Renderer_All"       data-renderer-type=""         aria-selected="true">All metrics</a></li>
         <li class="nav-item" role="presentation"><a class="nav-link action-filter-by-renderer-type"        id="Renderer_Chart"     data-toggle="pill" href="javascript:;" role="tab" aria-controls="Renderer_Chart"     data-renderer-type="Chart"    aria-selected="false">Charts</a></li>
         <li class="nav-item" role="presentation"><a class="nav-link action-filter-by-renderer-type"        id="Renderer_Table"     data-toggle="pill" href="javascript:;" role="tab" aria-controls="Renderer_Table"     data-renderer-type="List"     aria-selected="false">Lists</a></li>
         <li class="nav-item" role="presentation"><a class="nav-link action-filter-by-renderer-type"        id="Renderer_Progress"  data-toggle="pill" href="javascript:;" role="tab" aria-controls="Renderer_Progress"  data-renderer-type="Progress" aria-selected="false">Progress</a></li>
       </ul>
-
-      <div class="input-group" style="width:300px;">
-        <input type="text" class="action-search form-control" placeholder="Search" aria-label="Search">
-        <div class="input-group-append">
-          <button class="action-clear-search btn btn-secondary" type="button">Clear</button>
+      <form class="form-inline my-2 my-lg-0">
+        <div class="btn-group mr-2" role="group" aria-label="Basic example">
+          <button type="button" class="btn btn-secondary action-switch-theme active" data-theme="dark"><i class="fas fa-moon"></i></button>
+          <button type="button" class="btn btn-secondary action-switch-theme" data-theme="light"><i class="fas fa-sun"></i></button>
         </div>
-      </div>
+        <div class="input-group">
+          <input type="text" class="action-search form-control" placeholder="Search" aria-label="Search" style="width:200px;">
+          <div class="input-group-append">
+            <button class="action-clear-search btn btn-secondary" type="button">Clear</button>
+          </div>
+        </div>
+      </form>
     </div>
   </nav>
 

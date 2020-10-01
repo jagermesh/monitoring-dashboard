@@ -44,6 +44,7 @@
   "scripts": {
     "build": "npm install && gulp build",
     "update": "npm update && gulp build",
+    "start": "npm install && gulp build && node test.js",
     "release": "npm install && gulp build && np --no-2fa",
     "test": "echo \"OK\""
   },

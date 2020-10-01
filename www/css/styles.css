@@ -5,22 +5,32 @@ body {
   padding-top: 70px;
 }
 
+body[data-theme="dark"] {
+  background-color: black;
+}
+
+.navbar {
+  background-color: #202226!important;
+}
+
 .widget {
   cursor: pointer;
   width: 360px;
   max-height: 365px;
 }
 
-.widget-body {
-  overflow: auto;
-  font-size: 12px;
-  font-weight: 300;
-  height: 100%;
+body[data-theme="dark"] .widget {
+  background-color: #141619;
 }
 
 .widget-optimal-width {
   width: 10px;
   white-space: nowrap;
+}
+
+body[data-theme="dark"] .widget-header {
+  color: white;
+  background-color: #202226;
 }
 
 .widget-header .widget-title {
@@ -36,6 +46,22 @@ body {
   font-weight: 300;
   height: 18px;
   word-break: break-all;
+}
+
+.widget-body {
+  overflow: auto;
+  font-size: 12px;
+  font-weight: 300;
+  height: 100%;
+}
+
+body[data-theme="dark"] .widget-body {
+  color: #999;
+}
+
+body[data-theme="dark"] .widget-footer {
+  color: white;
+  background-color: #202226;
 }
 
 .widget-footer .widget-end-title {

@@ -8852,7 +8852,7 @@ function Renderer_Chart(container, sensorInfo, metricInfo, settings) {
   }
 
   function getGridLinesColor() {
-    return (__settings.theme == 'dark' ? '#3333333' : (__settings.theme == 'light' ? '#999999' : null));
+    return (__settings.theme === 'dark' ? '#333333' : (__settings.theme === 'light' ? '#EEEEEE' : null));
   }
 
   const chart = new Chart(control_Context, {

@@ -1,5 +1,7 @@
 function Renderer_Chart(container, sensorInfo, metricInfo, settings) {
 
+  let __settings = Object.assign({ }, settings);
+
   Renderer_Custom.call(this, container, sensorInfo, metricInfo, { rendererType: 'Chart' });
 
   const _this = this;
@@ -112,6 +114,10 @@ function Renderer_Chart(container, sensorInfo, metricInfo, settings) {
     return result;
   }
 
+  function getGridLinesColor() {
+    return (__settings.theme == 'dark' ? '#3333333' : (__settings.theme == 'light' ? '#999999' : null));
+  }
+
   const chart = new Chart(control_Context, {
     type: 'line'
   , data: {
@@ -127,7 +133,7 @@ function Renderer_Chart(container, sensorInfo, metricInfo, settings) {
         xAxes: [{
           display: true,
           gridLines: {
-            color: '#333'
+            color: getGridLinesColor()
           },
           ticks: {
                 display: false,
@@ -138,7 +144,7 @@ function Renderer_Chart(container, sensorInfo, metricInfo, settings) {
         yAxes: [{
           display: true,
           gridLines: {
-            color: '#333'
+            color: getGridLinesColor()
           },
           ticks: {
             suggestedMin: metricInfo.metricConfig.suggestedMin,
@@ -167,6 +173,13 @@ function Renderer_Chart(container, sensorInfo, metricInfo, settings) {
     }
     statData.push(data.values);
     draw();
+  };
+
+  _this.widgetContainer.__setTheme = function(theme) {
+    __settings.theme = theme;
+    chart.options.scales.xAxes[0].gridLines.color = getGridLinesColor();
+    chart.options.scales.yAxes[0].gridLines.color = getGridLinesColor();
+    chart.update();
   };
 
   return _this.widgetContainer;

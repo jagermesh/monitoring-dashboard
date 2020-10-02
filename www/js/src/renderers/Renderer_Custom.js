@@ -33,5 +33,6 @@ function Renderer_Custom(container, sensorInfo, metricInfo, settings) {
   _this.widgetContainer.__metricUid = metricInfo.uid;
 
   _this.widgetContainer.__pushData  = function() { };
+  _this.widgetContainer.__setTheme = function(theme) { };
 
 }

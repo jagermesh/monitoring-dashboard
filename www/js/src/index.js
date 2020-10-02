@@ -1,5 +1,10 @@
 $(function() {
   requirejs(['js/config.js'], function(config) {
+
+    function getTheme() {
+      return $('body').attr('data-theme');
+    }
+
     const backEndUrl = config.backendUrl;
 
     let widgetsContainer = $('div.widgets-container');
@@ -24,7 +29,7 @@ $(function() {
       sensorInfo.metricsList.map(function(metricInfo) {
         if (!metrics[metricInfo.uid]) {
           if (metricInfo.rendererName && renderers[metricInfo.rendererName]) {
-            let widget = new renderers[metricInfo.rendererName](widgetsContainer, sensorInfo, metricInfo);
+            let widget = new renderers[metricInfo.rendererName](widgetsContainer, sensorInfo, metricInfo, { theme: getTheme() });
             widgets.push(widget);
             metrics[metricInfo.uid] = widget;
           }
@@ -138,6 +143,9 @@ $(function() {
       $('.action-switch-theme').removeClass('active');
       $(this).addClass('active');
       $('body').attr('data-theme', $(this).attr('data-theme'));
+      widgets.map(function(widget) {
+        widget.__setTheme(getTheme());
+      });
     });
 
     $('#mainContainer').on('click', '.widget .widget-action-close', function(event) {

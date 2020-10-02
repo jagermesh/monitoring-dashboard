@@ -8732,9 +8732,12 @@ function Renderer_Custom(container, sensorInfo, metricInfo, settings) {
   _this.widgetContainer.__metricUid = metricInfo.uid;
 
   _this.widgetContainer.__pushData  = function() { };
+  _this.widgetContainer.__setTheme = function(theme) { };
 
 }
 function Renderer_Chart(container, sensorInfo, metricInfo, settings) {
+
+  let __settings = Object.assign({ }, settings);
 
   Renderer_Custom.call(this, container, sensorInfo, metricInfo, { rendererType: 'Chart' });
 
@@ -8848,6 +8851,10 @@ function Renderer_Chart(container, sensorInfo, metricInfo, settings) {
     return result;
   }
 
+  function getGridLinesColor() {
+    return (__settings.theme == 'dark' ? '#3333333' : (__settings.theme == 'light' ? '#999999' : null));
+  }
+
   const chart = new Chart(control_Context, {
     type: 'line'
   , data: {
@@ -8863,7 +8870,7 @@ function Renderer_Chart(container, sensorInfo, metricInfo, settings) {
         xAxes: [{
           display: true,
           gridLines: {
-            color: '#333'
+            color: getGridLinesColor()
           },
           ticks: {
                 display: false,
@@ -8874,7 +8881,7 @@ function Renderer_Chart(container, sensorInfo, metricInfo, settings) {
         yAxes: [{
           display: true,
           gridLines: {
-            color: '#333'
+            color: getGridLinesColor()
           },
           ticks: {
             suggestedMin: metricInfo.metricConfig.suggestedMin,
@@ -8903,6 +8910,13 @@ function Renderer_Chart(container, sensorInfo, metricInfo, settings) {
     }
     statData.push(data.values);
     draw();
+  };
+
+  _this.widgetContainer.__setTheme = function(theme) {
+    __settings.theme = theme;
+    chart.options.scales.xAxes[0].gridLines.color = getGridLinesColor();
+    chart.options.scales.yAxes[0].gridLines.color = getGridLinesColor();
+    chart.update();
   };
 
   return _this.widgetContainer;
@@ -9014,6 +9028,11 @@ function Renderer_Table(container, sensorInfo, metricInfo, settings) {
 }
 $(function() {
   requirejs(['js/config.js'], function(config) {
+
+    function getTheme() {
+      return $('body').attr('data-theme');
+    }
+
     const backEndUrl = config.backendUrl;
 
     let widgetsContainer = $('div.widgets-container');
@@ -9038,7 +9057,7 @@ $(function() {
       sensorInfo.metricsList.map(function(metricInfo) {
         if (!metrics[metricInfo.uid]) {
           if (metricInfo.rendererName && renderers[metricInfo.rendererName]) {
-            let widget = new renderers[metricInfo.rendererName](widgetsContainer, sensorInfo, metricInfo);
+            let widget = new renderers[metricInfo.rendererName](widgetsContainer, sensorInfo, metricInfo, { theme: getTheme() });
             widgets.push(widget);
             metrics[metricInfo.uid] = widget;
           }
@@ -9152,6 +9171,9 @@ $(function() {
       $('.action-switch-theme').removeClass('active');
       $(this).addClass('active');
       $('body').attr('data-theme', $(this).attr('data-theme'));
+      widgets.map(function(widget) {
+        widget.__setTheme(getTheme());
+      });
     });
 
     $('#mainContainer').on('click', '.widget .widget-action-close', function(event) {

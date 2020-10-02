@@ -17,7 +17,7 @@ function Renderer_Chart(container, sensorInfo, metricInfo, settings) {
   const control_Title    = widgetContainer.find('.widget-title');
   const control_SubTitle = widgetContainer.find('.widget-sub-title');
   const control_Chart    = widgetContainer.find('.widget-body').find('.chart');
-  const control_Context  = widgetContainer.find('.widget-body').find('.chart').find('canvas')[0].getContext('2d');
+  const control_Context  = control_Chart.find('canvas')[0].getContext('2d');
 
   const maxPeriod = 30;
 
@@ -63,10 +63,11 @@ function Renderer_Chart(container, sensorInfo, metricInfo, settings) {
     let color = randomColor();
     chartDataSets.push({ data:            []
                        , label:           dataset
-                       , borderColor:     (index == 0 ? metricInfo.metricConfig.lineColor : color.lineColor)
-                       , backgroundColor: (index == 0 ? metricInfo.metricConfig.fillColor : color.fillColor)
-                       , fill:            (index == 0 ? 'start' : false)
+                       , borderColor:     (index === 0 ? metricInfo.metricConfig.lineColor : color.lineColor)
+                       , backgroundColor: (index === 0 ? metricInfo.metricConfig.fillColor : color.fillColor)
+                       , fill:            (index === 0 ? 'start' : false)
                        , borderWidth:     2
+                       , pointRadius:     1
                        });
   });
 
@@ -124,7 +125,27 @@ function Renderer_Chart(container, sensorInfo, metricInfo, settings) {
       }
     , scales: {
         xAxes: [{
-          display: false
+          display: true,
+          gridLines: {
+            color: '#333'
+          },
+          ticks: {
+                display: false,
+                max: maxPeriod,
+                min: 0,
+            }
+        }],
+        yAxes: [{
+          display: true,
+          gridLines: {
+            color: '#333'
+          },
+          ticks: {
+            suggestedMin: metricInfo.metricConfig.suggestedMin,
+            suggestedMax: metricInfo.metricConfig.suggestedMax,
+            min: metricInfo.metricConfig.min,
+            max: metricInfo.metricConfig.max
+          }
         }]
       }
     , animation: {

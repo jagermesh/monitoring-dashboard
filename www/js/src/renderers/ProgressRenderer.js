@@ -14,7 +14,7 @@ class ProgressRenderer extends CustomRenderer {
 
     this.widgetContainer.find('.widget-body').append(bodyTemplate());
 
-    const operationTemplate = Handlebars.compile(`
+    this.operationTemplate = Handlebars.compile(`
       <tr valign="top">
         <td style="word-break:break-all;">{{name}}</td>
         <td class="widget-optimal-width text-right">{{current}} of {{total}} ({{percent}}%)</td>
@@ -45,7 +45,7 @@ class ProgressRenderer extends CustomRenderer {
         operation.percent = 100;
       }
       operation.isFinished = (operation.current == operation.total);
-      text += operationTemplate(operation);
+      text += _this.operationTemplate(operation);
     });
     _this.control_TableBody.html(text);
   }

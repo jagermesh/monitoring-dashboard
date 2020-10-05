@@ -1,7 +1,7 @@
-const MonitoringHub       = require('monitoring-hub');
-const MonitoringDashboard = require(__dirname + '/index.js');
-const MonitoringSensor    = require('monitoring-sensor');
-const ProgressLogger      = require('monitoring-progress-logger');
+const MonitoringHub        = require('monitoring-hub');
+const MonitoringDashboard  = require(__dirname + '/index.js');
+const { MonitoringSensor } = require('monitoring-sensor');
+const ProgressLogger       = require('monitoring-progress-logger');
 
 const config = {
   hub: {
@@ -16,53 +16,163 @@ const config = {
 , sensor: {
     hubUrl: 'http://localhost:8082'
   , metrics: [
+      // CPU
       { name: 'CPU'
       , refreshInterval: 1000
-      }
-    , { name: 'CPU'
+      , rendererName: 'Chart'
+      },
+      { name: 'CPU'
+      , refreshInterval: 1000
+      , rendererName: 'Chart'
+      , settings: {
+          processes: 'php,node'
+        }
+      },
+      { name: 'CPU'
+      , rendererName: 'Value'
+      , refreshInterval: 1000
+      },
+      { name: 'CPU'
+      , rendererName: 'Value'
       , refreshInterval: 1000
       , settings: {
-          processes: 'kernel_task,WindowServer'
+          processes: 'php,node'
         }
-      }
-    , { name: 'HDDFreeSpace'
+      },
+      { name: 'CPU'
+      , refreshInterval: 1000
+      , rendererName: 'Table'
+      },
+      { name: 'CPU'
+      , refreshInterval: 1000
+      , rendererName: 'Table'
+      , settings: {
+          processes: 'php,node'
+        }
+      },
+      // RAM
+      { name: 'RAM'
+      , rendererName: 'Chart'
+      , refreshInterval: 1000
+      },
+      { name: 'RAM'
+      , rendererName: 'Value'
+      , refreshInterval: 1000
+      },
+      { name: 'RAM'
+      , rendererName: 'Table'
+      , refreshInterval: 1000
+      },
+      // LA
+      { name: 'LA'
+      , rendererName: 'Chart'
+      , refreshInterval: 1000
+      },
+      { name: 'LA'
+      , rendererName: 'Value'
+      , refreshInterval: 1000
+      },
+      { name: 'LA'
+      , rendererName: 'Table'
+      , refreshInterval: 1000
+      },
+      // Processes
+      { name: 'Processes'
+      , rendererName: 'Chart'
+      , refreshInterval: 5000
+      },
+      { name: 'Processes'
+      , rendererName: 'Value'
+      , refreshInterval: 5000
+      },
+      { name: 'Processes'
+      , rendererName: 'Table'
+      , refreshInterval: 5000
+      },
+      { name: 'Processes'
+      , rendererName: 'Chart'
       , refreshInterval: 5000
       , settings: {
-          path: '/'
+          processes: 'php,node'
+        }
+      },
+      { name: 'Processes'
+      , rendererName: 'Value'
+      , refreshInterval: 5000
+      , settings: {
+          processes: 'php,node'
+        }
+      },
+      { name: 'Processes'
+      , rendererName: 'Table'
+      , refreshInterval: 5000
+      , settings: {
+          processes: 'php,node'
+        }
+      },
+      // HDD
+      { name: 'HDD'
+      , rendererName: 'Chart'
+      , refreshInterval: 1000
+      },
+      { name: 'HDD'
+      , refreshInterval: 1000
+      , rendererName: 'Table'
+      },
+      { name: 'HDD'
+      , refreshInterval: 1000
+      , rendererName: 'Value'
+      },
+      { name: 'HDD'
+      , refreshInterval: 1000
+      , rendererName: 'Chart'
+      , settings: {
+          mounts: '/System/Volumes/Data'
         , threshold: 80
         }
-      }
-    , { name: 'LA'
+      },
+      { name: 'HDD'
       , refreshInterval: 1000
-      }
-    , { name: 'MySQLProcessList'
+      , rendererName: 'Table'
+      , settings: {
+          mounts: '/System/Volumes/Data'
+        }
+      },
+      { name: 'HDD'
+      , refreshInterval: 1000
+      , rendererName: 'Value'
+      , settings: {
+          mounts: '/System/Volumes/Data'
+        }
+      },
+      // MySQLProcesses
+      { name: 'MySQLProcesses'
       , refreshInterval: 5000
+      , rendererName: 'Chart'
       , settings: {
           host: 'localhost'
         , user: 'root'
         , password: ''
         }
-      }
-    , { name: 'Processes'
+      },
+      { name: 'MySQLProcesses'
       , refreshInterval: 5000
-      }
-    , { name: 'Processes'
-      , refreshInterval: 5000
-      , settings: {
-          processes: 'php'
-        }
-      }
-    , { name: 'Processes'
       , rendererName: 'Table'
-      , refreshInterval: 5000
-      }
-    , { name: 'Processes'
-      , rendererName: 'Table'
-      , refreshInterval: 5000
       , settings: {
-          processes: 'php'
+          host: 'localhost'
+        , user: 'root'
+        , password: ''
         }
-      }
+      },
+      { name: 'MySQLProcesses'
+      , refreshInterval: 5000
+      , rendererName: 'Value'
+      , settings: {
+          host: 'localhost'
+        , user: 'root'
+        , password: ''
+        }
+      },
     ]
   }
 };
@@ -98,12 +208,12 @@ function sleep(delay) {
     loggerOperation12.start(op2max);
     loggerOperation22.start(op2max);
     for(let i2 = 0; i2 < op2max; i2++) {
-      loggerOperation12.step();
-      loggerOperation22.step();
+      loggerOperation12.current++;
+      loggerOperation22.current++;
       await sleep(timeout);
     }
-    loggerOperation11.step();
-    loggerOperation21.step();
+    loggerOperation11.current++;
+    loggerOperation21.current++;
     await sleep(timeout);
   }
   loggerSession1.finish();

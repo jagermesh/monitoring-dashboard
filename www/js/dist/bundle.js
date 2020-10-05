@@ -8697,269 +8697,324 @@ function RGBColor(color_string)
 
 }
 
-function Renderer_Custom(container, sensorInfo, metricInfo, settings) {
+class CustomRenderer {
 
-  const _this = this;
+  constructor(container, metricDescriptor, settings) {
+    this.metricDescriptor = Object.assign({ }, metricDescriptor);
+    this.settings = Object.assign({ }, settings);
 
-  const widgetTemplate = Handlebars.compile(`
-    <div class="widget card mb-3 mr-3" data-ip="{{sensorInfo.address}}" data-uid="{{metricInfo.uid}}" data-metric-name="{{metricInfo.name}}" data-renderer-name="{{metricInfo.rendererName}}" data-renderer-type="{{settings.rendererType}}">
-      <div class="widget-header card-header pl-2 pt-1 pb-1 pr-2">
-        <button type="button" class="close widget-action-close" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <div class="widget-title">
+    this.sensorUid = this.metricDescriptor.sensorInfo.sensorUid;
+    this.metricUid = this.metricDescriptor.metricInfo.metricUid;
+
+    const widgetTemplate = Handlebars.compile(`
+      <div class="widget card mb-3 mr-3" data-ip="{{sensorInfo.sensorLocation}}" data-uid="{{metricInfo.metricUid}}" data-metric-name="{{metricInfo.metricName}}" data-renderer-name="{{metricInfo.metricRenderer}}">
+        <div class="widget-header card-header pl-2 pt-1 pb-1 pr-2">
+          <button type="button" class="close widget-action-close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <div class="widget-title">
+            <span class="widget-title-info"></span>
+            <span class="widget-title-tags badge badge-pill badge-warning">{{metricInfo.metricTags}}</span>
+          </div>
+          <div class="widget-sub-title"></div>
         </div>
-        <div class="widget-sub-title">
+        <div class="widget-body card-body m-0 p-1">
+        </div>
+        <div class="widget-footer card-footer pl-2 pt-1 pb-1 pr-2">
+          <div class="widget-footer-title float-left">
+            {{sensorInfo.sensorLocation}}
+          </div>
+          <div class="widget-footer-sub-title float-right">
+            {{metricConfig.filter}}
+          </div>
         </div>
       </div>
-      <div class="widget-body card-body m-0 p-1">
-      </div>
-      <div class="widget-footer card-footer pl-2 pt-1 pb-1 pr-2">
-        <div class="widget-end-title">
-          {{sensorInfo.address}}
-        </div>
-      </div>
-    </div>
-  `);
+    `);
 
-  let widgetContainer = $(widgetTemplate({ sensorInfo: sensorInfo, metricInfo: metricInfo, settings: settings }));
+    this.widgetContainer = $(widgetTemplate(metricDescriptor));
+    $(container).append(this.widgetContainer);
 
-  $(container).append(widgetContainer);
+    this.control_Title = this.widgetContainer.find('.widget-title');
+    this.control_TitleInfo = this.control_Title.find('.widget-title-info');
+    this.control_TitleTags = this.control_Title.find('.widget-title-tags');
+    this.control_SubTitle = this.widgetContainer.find('.widget-sub-title');
+    this.control_Body = this.widgetContainer.find('.widget-body');
+    this.control_Footer_Title = this.widgetContainer.find('.widget-footer-title');
+    this.control_Footer_SubTitle = this.widgetContainer.find('.widget-footer-sub-title');
+  }
 
-  _this.widgetContainer = widgetContainer[0];
+  pushData(data) {
+    const _this = this;
 
-  _this.widgetContainer.__sensorUid = sensorInfo.sensorUid;
-  _this.widgetContainer.__metricUid = metricInfo.uid;
+    let title = `${data.title} (${_this.metricDescriptor.sensorInfo.sensorName})`;
+    _this.control_TitleInfo.html(title);
 
-  _this.widgetContainer.__pushData  = function() { };
-  _this.widgetContainer.__setTheme = function(theme) { };
+    if (data.subTitle) {
+      _this.control_SubTitle.html(data.subTitle);
+    }
+    if (data.footerTitle) {
+      _this.control_Footer_Title.html(data.footerTitle);
+    }
+    if (data.footerSubTitle) {
+      _this.control_Footer_SubTitle.html(data.footerSubTitle);
+    }
+  }
+
+  setTheme(name) {
+
+  }
+
+  remove() {
+    this.widgetContainer.remove();
+  }
 
 }
-function Renderer_Chart(container, sensorInfo, metricInfo, settings) {
+class ChartRenderer extends CustomRenderer {
 
-  let __settings = Object.assign({ }, settings);
+  constructor(container, metricDescriptor, settings) {
+    super(container, metricDescriptor, settings);
 
-  Renderer_Custom.call(this, container, sensorInfo, metricInfo, { rendererType: 'Chart' });
+    const _this = this;
 
-  const _this = this;
+    const bodyTemplate = Handlebars.compile(`
+      <div class="chart">
+        <canvas style="width:350px;height:280px;"></canvas>
+      </div>
+    `);
 
-  const bodyTemplate = Handlebars.compile(`
-    <div class="chart">
-      <canvas style="width:350px;height:280px;"></canvas>
-    </div>
-  `);
+    _this.widgetContainer.find('.widget-body').append(bodyTemplate());
 
-  let widgetContainer = $(_this.widgetContainer);
+    _this.control_Chart    = _this.widgetContainer.find('.widget-body').find('.chart');
+    _this.control_Context  = _this.control_Chart.find('canvas')[0].getContext('2d');
 
-  widgetContainer.find('.widget-body').append(bodyTemplate());
+    _this.maxPeriod = 30;
 
-  const control_Title    = widgetContainer.find('.widget-title');
-  const control_SubTitle = widgetContainer.find('.widget-sub-title');
-  const control_Chart    = widgetContainer.find('.widget-body').find('.chart');
-  const control_Context  = control_Chart.find('canvas')[0].getContext('2d');
+    _this.statData = [];
 
-  const maxPeriod = 30;
+    const colors = ['aqua', 'burlywood', 'deepskyblue', 'mediumslateblue', 'beige', 'honeydew', 'honeydew', 'paleturquoise'];
+    let usedColors = 0;
 
-  let statData = [];
+    _this.metricDescriptor.metricConfig.datasets = _this.metricDescriptor.metricConfig.datasets || [];
 
-  function getLabels() {
+    const isMultipleDataSets = (_this.metricDescriptor.metricConfig.datasets.length > 1);
+    const opacity = 0.3;
+
+    if (_this.metricDescriptor.metricConfig.lineColor) {
+      let color = new RGBColor(_this.metricDescriptor.metricConfig.lineColor);
+      _this.metricDescriptor.metricConfig.fillColor = `rgb(${color.r},${color.g},${color.b},${opacity})`;
+    } else {
+      let color = randomColor();
+      _this.metricDescriptor.metricConfig.lineColor = color.lineColor;
+      _this.metricDescriptor.metricConfig.fillColor = color.fillColor;
+    }
+
+    if (_this.metricDescriptor.metricConfig.ranges) {
+      _this.metricDescriptor.metricConfig.ranges.map(function(range) {
+        let color = new RGBColor(range.lineColor);
+        range.fillColor = `rgb(${color.r},${color.g},${color.b},${opacity})`;
+      });
+    }
+
+    function randomColor() {
+      let lineColor, fillColor;
+      if (usedColors >= colors.length) {
+        const r = Math.floor(Math.random() * 255);
+        const g = Math.floor(Math.random() * 255);
+        const b = Math.floor(Math.random() * 255);
+        lineColor = `rgb(${r},${g},${b})`;
+        fillColor = `rgb(${r},${g},${b},${opacity})` ;
+      } else {
+        lineColor = colors[usedColors];
+        usedColors++;
+        let color = new RGBColor(lineColor);
+        fillColor = `rgb(${color.r},${color.g},${color.b},${opacity})`;
+      }
+      return { lineColor: lineColor, fillColor: fillColor };
+    }
+
+    _this.chartDataSets = [];
+
+    _this.metricDescriptor.metricConfig.datasets.map(function(dataset, index) {
+      let color = index === 0 ? { lineColor: _this.metricDescriptor.metricConfig.lineColor, fillColor: _this.metricDescriptor.metricConfig.fillColor } : randomColor();
+      _this.chartDataSets.push({
+          data:            []
+        , label:           dataset
+        , borderColor:     color.lineColor
+        , backgroundColor: color.fillColor
+        , fill:            (index === 0 ? 'start' : false)
+        , borderWidth:     2
+        , pointRadius:     1
+      });
+    });
+
+    _this.chart = new Chart(_this.control_Context, {
+      type: 'line'
+    , data: {
+          labels:   _this.getLabels()
+        , datasets: _this.getDataSets()
+      }
+    , options: {
+        legend: {
+            display:  isMultipleDataSets
+          , position: 'bottom'
+        }
+      , scales: {
+          xAxes: [{
+            display: true,
+            gridLines: {
+              color: _this.getGridLinesColor()
+            },
+            ticks: {
+              display: false,
+              max: _this.maxPeriod,
+              min: 0,
+            }
+          }],
+          yAxes: [{
+            display: true,
+            gridLines: {
+              color: _this.getGridLinesColor()
+            },
+            ticks: {
+              suggestedMin: _this.metricDescriptor.metricConfig.suggestedMin,
+              suggestedMax: _this.metricDescriptor.metricConfig.suggestedMax,
+              min: _this.metricDescriptor.metricConfig.min,
+              max: _this.metricDescriptor.metricConfig.max
+            }
+          }]
+        }
+      , animation: {
+          duration: 0 // general animation time
+        }
+      }
+    });
+  }
+
+  getLabels() {
+    const _this = this;
+
     let res = [];
-    for (let i = 0; i < maxPeriod; i++) {
+    for (let i = 0; i < _this.maxPeriod; i++) {
       res.push(i);
     }
     return res;
   }
 
-  const isMultipleDataSets = (metricInfo.metricConfig.datasets.length > 1);
-  const opacity = 0.3;
+  getDataSets() {
+    const _this = this;
 
-  if (metricInfo.metricConfig.lineColor) {
-    let color = new RGBColor(metricInfo.metricConfig.lineColor);
-    metricInfo.metricConfig.fillColor = `rgb(${color.r},${color.g},${color.b},${opacity})`;
-  } else {
-    let color = randomColor();
-    metricInfo.metricConfig.lineColor = color.lineColor;
-    metricInfo.metricConfig.fillColor = color.fillColor;
-  }
-
-  if (metricInfo.metricConfig.ranges) {
-    metricInfo.metricConfig.ranges.map(function(range) {
-      let color = new RGBColor(range.lineColor);
-      range.fillColor = `rgb(${color.r},${color.g},${color.b},${opacity})`;
-    });
-  }
-
-  function randomColor() {
-    const r = Math.floor(Math.random() * 255);
-    const g = Math.floor(Math.random() * 255);
-    const b = Math.floor(Math.random() * 255);
-    return { lineColor: `rgb(${r},${g},${b})`, fillColor: `rgb(${r},${g},${b},${opacity})` };
-  }
-
-  const chartDataSets = [];
-
-  metricInfo.metricConfig.datasets.map(function(dataset, index) {
-    let color = randomColor();
-    chartDataSets.push({ data:            []
-                       , label:           dataset
-                       , borderColor:     (index === 0 ? metricInfo.metricConfig.lineColor : color.lineColor)
-                       , backgroundColor: (index === 0 ? metricInfo.metricConfig.fillColor : color.fillColor)
-                       , fill:            (index === 0 ? 'start' : false)
-                       , borderWidth:     2
-                       , pointRadius:     1
-                       });
-  });
-
-  function getDataSets() {
-
-    let result = Object.assign([], chartDataSets);
+    let result = Object.assign([], _this.chartDataSets);
     result.map(function(item) {
       item.data = [];
     });
 
-    let last = 0;
+    if (result.length > 0) {
+      let last = 0;
 
-    statData.map(function(values) {
-      values.map(function(value, index) {
-        result[index].data.push(value);
-        if (index === 0) {
-          last = value;
-        }
+      _this.statData.map(function(values) {
+        values.map(function(value, index) {
+          result[index].data.push(value);
+          if (index === 0) {
+            last = value;
+          }
+        });
       });
-    });
 
-    let found = false;
+      let found = false;
 
-    if (last) {
-      if (metricInfo.metricConfig.ranges) {
-        for(let i = metricInfo.metricConfig.ranges.length-1; i >= 0; i--) {
-          if (last >= metricInfo.metricConfig.ranges[i].value) {
-            result[0].borderColor = metricInfo.metricConfig.ranges[i].lineColor;
-            result[0].backgroundColor = metricInfo.metricConfig.ranges[i].fillColor;
-            found  = true;
-            break;
+      if (last) {
+        if (_this.metricDescriptor.metricConfig.ranges) {
+          for(let i = _this.metricDescriptor.metricConfig.ranges.length-1; i >= 0; i--) {
+            if (last >= _this.metricDescriptor.metricConfig.ranges[i].value) {
+              result[0].borderColor     = _this.metricDescriptor.metricConfig.ranges[i].lineColor;
+              result[0].backgroundColor = _this.metricDescriptor.metricConfig.ranges[i].fillColor;
+              found  = true;
+              break;
+            }
           }
         }
       }
-    }
 
-    if (!found) {
-      result[0].borderColor = metricInfo.metricConfig.lineColor;
-      result[0].backgroundColor = metricInfo.metricConfig.fillColor;
+      if (!found) {
+        result[0].borderColor     = _this.metricDescriptor.metricConfig.lineColor;
+        result[0].backgroundColor = _this.metricDescriptor.metricConfig.fillColor;
+      }
     }
 
     return result;
   }
 
-  function getGridLinesColor() {
-    return (__settings.theme === 'dark' ? '#333333' : (__settings.theme === 'light' ? '#EEEEEE' : null));
+  draw() {
+    const _this = this;
+
+    _this.chart.data.datasets = _this.getDataSets();
+    _this.chart.update();
   }
 
-  const chart = new Chart(control_Context, {
-    type: 'line'
-  , data: {
-      labels:   getLabels()
-    , datasets: getDataSets()
-    }
-  , options: {
-      legend: {
-        display:  isMultipleDataSets
-      , position: 'bottom'
-      }
-    , scales: {
-        xAxes: [{
-          display: true,
-          gridLines: {
-            color: getGridLinesColor()
-          },
-          ticks: {
-                display: false,
-                max: maxPeriod,
-                min: 0,
-            }
-        }],
-        yAxes: [{
-          display: true,
-          gridLines: {
-            color: getGridLinesColor()
-          },
-          ticks: {
-            suggestedMin: metricInfo.metricConfig.suggestedMin,
-            suggestedMax: metricInfo.metricConfig.suggestedMax,
-            min: metricInfo.metricConfig.min,
-            max: metricInfo.metricConfig.max
-          }
-        }]
-      }
-    , animation: {
-        duration: 0 // general animation time
-      }
-    }
-  });
+  getGridLinesColor() {
+    const _this = this;
 
-  function draw() {
-    chart.data.datasets = getDataSets();
-    chart.update();
+    return (_this.settings.theme === 'dark' ? '#333333' : (_this.settings.theme === 'light' ? '#EEEEEE' : null));
   }
 
-  _this.widgetContainer.__pushData = function(data) {
-    control_Title.html(data.title);
-    control_SubTitle.html(data.subTitle);
-    while (statData.length > maxPeriod) {
-      statData = statData.slice(1);
+  pushData(data) {
+    super.pushData(data);
+
+    const _this = this;
+
+    while (_this.statData.length > _this.maxPeriod) {
+      _this.statData = _this.statData.slice(1);
     }
-    statData.push(data.values);
-    draw();
-  };
+    _this.statData.push(data.points);
+    _this.draw();
+  }
 
-  _this.widgetContainer.__setTheme = function(theme) {
-    __settings.theme = theme;
-    chart.options.scales.xAxes[0].gridLines.color = getGridLinesColor();
-    chart.options.scales.yAxes[0].gridLines.color = getGridLinesColor();
-    chart.update();
-  };
+  setTheme(theme) {
+    const _this = this;
 
-  return _this.widgetContainer;
+    _this.settings.theme = theme;
+    _this.chart.options.scales.xAxes[0].gridLines.color = _this.getGridLinesColor();
+    _this.chart.options.scales.yAxes[0].gridLines.color = _this.getGridLinesColor();
+    _this.chart.update();
+  }
 
 }
-function Renderer_Progress(container, sensorInfo, metricInfo, settings) {
+class ProgressRenderer extends CustomRenderer {
 
-  Renderer_Custom.call(this, container, sensorInfo, metricInfo, { rendererType: 'Progress' });
+  constructor(container, metricDescriptor, settings) {
+    super(container, metricDescriptor, settings);
 
-  const _this = this;
+    const _this = this;
 
-  const bodyTemplate = Handlebars.compile(`
-    <table style="width:100%;">
-      <tbody>
-      </tbody>
-    </table>
-  `);
+    const bodyTemplate = Handlebars.compile(`
+      <table style="width:100%;">
+        <tbody>
+        </tbody>
+      </table>
+    `);
 
-  let widgetContainer = $(_this.widgetContainer);
+    this.widgetContainer.find('.widget-body').append(bodyTemplate());
 
-  widgetContainer.find('.widget-body').append(bodyTemplate());
+    const operationTemplate = Handlebars.compile(`
+      <tr valign="top">
+        <td style="word-break:break-all;">{{name}}</td>
+        <td class="widget-optimal-width text-right">{{current}} of {{total}} ({{percent}}%)</td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <div class="progress">
+            <div class="progress-bar {{#if isFinished}}bg-success{{else}}bg-warning{{/if}}" role="progressbar" style="width: {{percent}}%;" aria-valuenow="{{percent}}" aria-valuemin="0" aria-valuemax="100">{{percent}}%</div>
+          </div>
+        </td>
+      </tr>
+    `);
 
-  const operationTemplate = Handlebars.compile(`
-    <tr valign="top">
-      <td style="word-break:break-all;">{{name}}</td>
-      <td class="widget-optimal-width text-right">{{current}} of {{total}} ({{percent}}%)</td>
-    </tr>
-    <tr>
-      <td colspan="2">
-        <div class="progress">
-          <div class="progress-bar {{#if isFinished}}bg-success{{else}}bg-warning{{/if}}" role="progressbar" style="width: {{percent}}%;" aria-valuenow="{{percent}}" aria-valuemin="0" aria-valuemax="100">{{percent}}%</div>
-        </div>
-      </td>
-    </tr>
-  `);
+    _this.control_TableBody = _this.widgetContainer.find('.widget-body').find('tbody');
+  }
 
-  const control_Title     = widgetContainer.find('.widget-title');
-  const control_SubTitle  = widgetContainer.find('.widget-sub-title');
-  const control_TableBody = widgetContainer.find('.widget-body').find('tbody');
+  pushData(data) {
+    super.pushData(data);
 
-  _this.widgetContainer.__pushData = function(data) {
-    control_Title.html(data.title);
-    control_SubTitle.html(data.subTitle);
+    const _this = this;
+
     let operations = data.operations;
     let text = '';
     operations.map(function(operation) {
@@ -8971,59 +9026,110 @@ function Renderer_Progress(container, sensorInfo, metricInfo, settings) {
       operation.isFinished = (operation.current == operation.total);
       text += operationTemplate(operation);
     });
-    control_TableBody.html(text);
-  };
-
-  return _this.widgetContainer;
+    _this.control_TableBody.html(text);
+  }
 
 }
-function Renderer_Table(container, sensorInfo, metricInfo, settings) {
+class TableRenderer extends CustomRenderer {
 
-  Renderer_Custom.call(this, container, sensorInfo, metricInfo, { rendererType: 'List' });
+  constructor(container, metricDescriptor, settings) {
+    super(container, metricDescriptor, settings);
 
-  const _this = this;
+    const _this = this;
 
-  const bodyTemplate = Handlebars.compile(`
-    <table class="table-condensed table-striped table-hover" style="width:100%;font-size:8pt;font-family:Courier;line-height:8pt;">
-      <thead class="table-header"></thead>
-      <tbody class="table-body"></tbody>
-    </table>
-  `);
+    const bodyTemplate = Handlebars.compile(`
+      <table class="widget-table table table-condensed table-striped" style="width:100%;font-size:8pt;font-family:monospace,Courier;line-height:1.2em;">
+        <thead class="table-header"></thead>
+        <tbody class="table-body"><tr><td>No data</td></tr></tbody>
+      </table>
+    `);
 
-  let widgetContainer = $(_this.widgetContainer);
+    _this.widgetContainer.find('.widget-body').append(bodyTemplate());
 
-  widgetContainer.find('.widget-body').append(bodyTemplate());
+    _this.control_TableHeader = _this.control_Body.find('thead');
+    _this.control_TableBody = _this.control_Body.find('tbody');
+  }
 
-  const control_Title       = widgetContainer.find('.widget-title');
-  const control_SubTitle    = widgetContainer.find('.widget-sub-title');
-  const control_TableHeader = widgetContainer.find('.widget-body').find('thead');
-  const control_TableBody   = widgetContainer.find('.widget-body').find('tbody');
+  pushData(data) {
+    super.pushData(data);
 
-  _this.widgetContainer.__pushData = function(data) {
-    control_Title.html(data.title);
-    control_SubTitle.html(data.subTitle);
+    const _this = this;
 
-    let tableHeader = '<tr>';
-    data.list.header.map(function(caption) {
-      tableHeader += `<th>${caption}</th>`;
-    });
-    tableHeader += '</tr>';
+    if (data.table) {
+      if (data.table.header && (data.table.header.length > 0)) {
+        let tableHeader = '<tr>';
+        data.table.header.map(function(caption) {
+          tableHeader += `<th>${caption}</th>`;
+        });
+        tableHeader += '</tr>';
+        _this.control_TableHeader.html(tableHeader);
+      }
+      if (data.table.body && (data.table.body.length > 0)) {
+        let tableBody = '';
+        data.table.body.map(function(row) {
+          tableBody += '<tr>';
+          row.map(function(cell) {
+            let value = $(`<span>${cell}</span>`).text();
+            tableBody += `<td>${value}</td>`;
+          });
+          tableBody += '</tr>';
+        });
+        _this.control_TableBody.html(tableBody);
+      }
+    }
+  }
 
-    control_TableHeader.html(tableHeader);
+}
+class ValueRenderer extends CustomRenderer {
 
-    let tableBody = '';
-    data.list.body.map(function(row) {
-      tableBody += '<tr>';
-      row.map(function(cell) {
-        let value = $(`<span>${cell}</span>`).text();
-        tableBody += `<td>${value}</td>`;
+  constructor(container, metricDescriptor, settings) {
+    super(container, metricDescriptor, settings);
+
+    const _this = this;
+
+    const bodyTemplate = Handlebars.compile(`
+      <div class="content" style="text-align:center;">
+        <div class="value1" style="font-size:64px;"></div>
+        <div class="value2" style="font-size:64px;"></div>
+        <div class="value3" style="font-size:64px;"></div>
+      </div>
+    `);
+
+    _this.widgetContainer.find('.widget-body').append(bodyTemplate());
+
+    _this.control_Content = _this.control_Body.find('.content');
+
+  }
+
+  pushData(data) {
+    super.pushData(data);
+
+    const _this = this;
+
+    let texts = '';
+
+    if (data.values) {
+      data.values.map(function(value) {
+        let text = value.formatted ? value.formatted : value.raw;
+        text = `<div style="font-size:64px;line-height:1em;">${text}</div>`;
+        if (value.label) {
+          text = `<span style="font-size: 14px">${value.label}</span>${text}`;
+        }
+        if (value.threshold && _this.metricDescriptor.metricConfig.ranges) {
+          for(let i = _this.metricDescriptor.metricConfig.ranges.length-1; i >= 0; i--) {
+            if (value.threshold >= _this.metricDescriptor.metricConfig.ranges[i].value) {
+              text = `<div style="color:${_this.metricDescriptor.metricConfig.ranges[i].lineColor}">${text}</div>`;
+              break;
+            }
+          }
+        }
+        text = `<div style="margin-top:5px;height:85px;overflow:hidden;">${text}</div>`;
+        texts += text;
       });
-      tableBody += '</tr>';
-    });
-    control_TableBody.html(tableBody);
-  };
+    }
 
-  return _this.widgetContainer;
+    _this.control_Content.html(texts);
+  }
 
 }
 $(function() {
@@ -9045,48 +9151,49 @@ $(function() {
       }
     }
 
-    const renderers = { Chart:           Renderer_Chart
-                      , Progress:        Renderer_Progress
-                      , Table:           Renderer_Table
-                      };
+    const renderers = {
+        Chart:    ChartRenderer
+      , Progress: ProgressRenderer
+      , Table:    TableRenderer
+      , Value:    ValueRenderer
+    };
 
     let widgets = [];
     let metrics = {};
 
-    function registerSensor(sensorInfo) {
-      sensorInfo.metricsList.map(function(metricInfo) {
-        if (!metrics[metricInfo.uid]) {
-          if (metricInfo.rendererName && renderers[metricInfo.rendererName]) {
-            let widget = new renderers[metricInfo.rendererName](widgetsContainer, sensorInfo, metricInfo, { theme: getTheme() });
-            widgets.push(widget);
-            metrics[metricInfo.uid] = widget;
-          }
+    function registerMetric(metricDescriptor) {
+      let metric = metrics[metricDescriptor.metricInfo.metricUid];
+      if (!metric) {
+        if (metricDescriptor.metricInfo.metricRenderer && renderers[metricDescriptor.metricInfo.metricRenderer]) {
+          const widget = new renderers[metricDescriptor.metricInfo.metricRenderer](widgetsContainer, metricDescriptor, { theme: getTheme() });
+          widgets.push(widget);
+          metrics[metricDescriptor.metricInfo.metricUid] = widget;
         }
-      });
+      }
     }
 
     function pushData(metricUid, metricData) {
       let metric = metrics[metricUid];
       if (metric) {
-        metric.__pushData(metricData);
+        metric.pushData(metricData);
       }
     }
 
-    function removeSensor(sensorUid) {
+    function removeMetric(metricDescriptor) {
       widgets = widgets.filter(function(widget) {
-        if (widget.__sensorUid == sensorUid) {
+        if (widget.metricUid == metricDescriptor.metricInfo.metricUid) {
           widget.remove();
-          delete metrics[widget.__metricUid];
+          delete metrics[widget.metricUid];
           return false;
         }
         return true;
       });
     }
 
-    function removeAllSensors() {
+    function removeAllMetrics() {
       widgets = widgets.filter(function(widget) {
         widget.remove();
-        delete metrics[widget.__metricUid];
+        delete metrics[widget.metricUid];
         return false;
       });
     }
@@ -9113,36 +9220,34 @@ $(function() {
       log('offline');
       indicateHubStatus(false);
     });
-    dataServer.on('sensorRegistered', function (data) {
-      log('sensorRegistered', data);
-      registerSensor(data.sensorInfo);
+    dataServer.on('registerMetric', function (metricDescriptor) {
+      log('registerMetric', metricDescriptor);
+      registerMetric(metricDescriptor);
       filter();
     });
-    dataServer.on('sensorUnregistered', function (data) {
-      log('sensorUnregistered', data);
-      window.setTimeout(function() {
-        removeSensor(data.sensorInfo.sensorUid);
-      });
+    dataServer.on('unregisterMetric', function (metricDescriptor) {
+      log('unregisterMetric', metricDescriptor);
+      removeMetric(metricDescriptor);
     });
-    dataServer.on('sensorData', function (data) {
-      // log(data);
+    dataServer.on('metricData', function (data) {
+      log(data);
       pushData(data.metricUid, data.metricData);
     });
-    dataServer.on('disconnect', function(data) {
-      log('disconnect', data);
+    dataServer.on('disconnect', function() {
+      log('disconnect');
       indicateHubStatus(false);
-      removeAllSensors();
+      removeAllMetrics();
     });
 
     function filter() {
       let keyword = $('.action-search').val().toLowerCase();
-      let rendererName = $('.action-filter-by-renderer-type.active').attr('data-renderer-type');
+      let rendererName = $('.action-filter-by-renderer-name.active').attr('data-renderer-name');
       $('#mainContainer .widget').each(function() {
         let scope = $('.widget-header', $(this)).text().toLowerCase() + ' ' + $('.widget-footer', $(this)).text().toLowerCase();
         if (scope.indexOf(keyword) == -1) {
           $(this).hide();
         } else {
-          let currentRendererName = $(this).attr('data-renderer-type');
+          let currentRendererName = $(this).attr('data-renderer-name');
           if ((rendererName.length === 0) || (currentRendererName == rendererName)) {
             $(this).show();
           } else {
@@ -9157,7 +9262,7 @@ $(function() {
       filter();
     });
 
-    $('.action-filter-by-renderer-type').on('click', function() {
+    $('.action-filter-by-renderer-name').on('click', function() {
       window.setTimeout(function() {
         filter();
       });
@@ -9172,7 +9277,7 @@ $(function() {
       $(this).addClass('active');
       $('body').attr('data-theme', $(this).attr('data-theme'));
       widgets.map(function(widget) {
-        widget.__setTheme(getTheme());
+        widget.setTheme(getTheme());
       });
     });
 

@@ -17,48 +17,49 @@ $(function() {
       }
     }
 
-    const renderers = { Chart:           Renderer_Chart
-                      , Progress:        Renderer_Progress
-                      , Table:           Renderer_Table
-                      };
+    const renderers = {
+        Chart:    ChartRenderer
+      , Progress: ProgressRenderer
+      , Table:    TableRenderer
+      , Value:    ValueRenderer
+    };
 
     let widgets = [];
     let metrics = {};
 
-    function registerSensor(sensorInfo) {
-      sensorInfo.metricsList.map(function(metricInfo) {
-        if (!metrics[metricInfo.uid]) {
-          if (metricInfo.rendererName && renderers[metricInfo.rendererName]) {
-            let widget = new renderers[metricInfo.rendererName](widgetsContainer, sensorInfo, metricInfo, { theme: getTheme() });
-            widgets.push(widget);
-            metrics[metricInfo.uid] = widget;
-          }
+    function registerMetric(metricDescriptor) {
+      let metric = metrics[metricDescriptor.metricInfo.metricUid];
+      if (!metric) {
+        if (metricDescriptor.metricInfo.metricRenderer && renderers[metricDescriptor.metricInfo.metricRenderer]) {
+          const widget = new renderers[metricDescriptor.metricInfo.metricRenderer](widgetsContainer, metricDescriptor, { theme: getTheme() });
+          widgets.push(widget);
+          metrics[metricDescriptor.metricInfo.metricUid] = widget;
         }
-      });
+      }
     }
 
     function pushData(metricUid, metricData) {
       let metric = metrics[metricUid];
       if (metric) {
-        metric.__pushData(metricData);
+        metric.pushData(metricData);
       }
     }
 
-    function removeSensor(sensorUid) {
+    function removeMetric(metricDescriptor) {
       widgets = widgets.filter(function(widget) {
-        if (widget.__sensorUid == sensorUid) {
+        if (widget.metricUid == metricDescriptor.metricInfo.metricUid) {
           widget.remove();
-          delete metrics[widget.__metricUid];
+          delete metrics[widget.metricUid];
           return false;
         }
         return true;
       });
     }
 
-    function removeAllSensors() {
+    function removeAllMetrics() {
       widgets = widgets.filter(function(widget) {
         widget.remove();
-        delete metrics[widget.__metricUid];
+        delete metrics[widget.metricUid];
         return false;
       });
     }
@@ -85,36 +86,34 @@ $(function() {
       log('offline');
       indicateHubStatus(false);
     });
-    dataServer.on('sensorRegistered', function (data) {
-      log('sensorRegistered', data);
-      registerSensor(data.sensorInfo);
+    dataServer.on('registerMetric', function (metricDescriptor) {
+      log('registerMetric', metricDescriptor);
+      registerMetric(metricDescriptor);
       filter();
     });
-    dataServer.on('sensorUnregistered', function (data) {
-      log('sensorUnregistered', data);
-      window.setTimeout(function() {
-        removeSensor(data.sensorInfo.sensorUid);
-      });
+    dataServer.on('unregisterMetric', function (metricDescriptor) {
+      log('unregisterMetric', metricDescriptor);
+      removeMetric(metricDescriptor);
     });
-    dataServer.on('sensorData', function (data) {
-      // log(data);
+    dataServer.on('metricData', function (data) {
+      log(data);
       pushData(data.metricUid, data.metricData);
     });
-    dataServer.on('disconnect', function(data) {
-      log('disconnect', data);
+    dataServer.on('disconnect', function() {
+      log('disconnect');
       indicateHubStatus(false);
-      removeAllSensors();
+      removeAllMetrics();
     });
 
     function filter() {
       let keyword = $('.action-search').val().toLowerCase();
-      let rendererName = $('.action-filter-by-renderer-type.active').attr('data-renderer-type');
+      let rendererName = $('.action-filter-by-renderer-name.active').attr('data-renderer-name');
       $('#mainContainer .widget').each(function() {
         let scope = $('.widget-header', $(this)).text().toLowerCase() + ' ' + $('.widget-footer', $(this)).text().toLowerCase();
         if (scope.indexOf(keyword) == -1) {
           $(this).hide();
         } else {
-          let currentRendererName = $(this).attr('data-renderer-type');
+          let currentRendererName = $(this).attr('data-renderer-name');
           if ((rendererName.length === 0) || (currentRendererName == rendererName)) {
             $(this).show();
           } else {
@@ -129,7 +128,7 @@ $(function() {
       filter();
     });
 
-    $('.action-filter-by-renderer-type').on('click', function() {
+    $('.action-filter-by-renderer-name').on('click', function() {
       window.setTimeout(function() {
         filter();
       });
@@ -144,7 +143,7 @@ $(function() {
       $(this).addClass('active');
       $('body').attr('data-theme', $(this).attr('data-theme'));
       widgets.map(function(widget) {
-        widget.__setTheme(getTheme());
+        widget.setTheme(getTheme());
       });
     });
 

@@ -18,10 +18,11 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarMain">
       <ul class="nav nav-pills navbar-nav mr-auto" id="pills-tab" role="tablist">
-        <li class="nav-item" role="presentation"><a class="nav-link action-filter-by-renderer-type active" id="Renderer_All"       data-toggle="pill" href="javascript:;" role="tab" aria-controls="Renderer_All"       data-renderer-type=""         aria-selected="true">All metrics</a></li>
-        <li class="nav-item" role="presentation"><a class="nav-link action-filter-by-renderer-type"        id="Renderer_Chart"     data-toggle="pill" href="javascript:;" role="tab" aria-controls="Renderer_Chart"     data-renderer-type="Chart"    aria-selected="false">Charts</a></li>
-        <li class="nav-item" role="presentation"><a class="nav-link action-filter-by-renderer-type"        id="Renderer_Table"     data-toggle="pill" href="javascript:;" role="tab" aria-controls="Renderer_Table"     data-renderer-type="List"     aria-selected="false">Lists</a></li>
-        <li class="nav-item" role="presentation"><a class="nav-link action-filter-by-renderer-type"        id="Renderer_Progress"  data-toggle="pill" href="javascript:;" role="tab" aria-controls="Renderer_Progress"  data-renderer-type="Progress" aria-selected="false">Progress</a></li>
+        <li class="nav-item" role="presentation"><a class="nav-link action-filter-by-renderer-name active" id="Renderer_All"      data-toggle="pill" href="javascript:;" role="tab" aria-controls="Renderer_All"       data-renderer-name=""         aria-selected="true">All</a></li>
+        <li class="nav-item" role="presentation"><a class="nav-link action-filter-by-renderer-name"        id="Renderer_Chart"    data-toggle="pill" href="javascript:;" role="tab" aria-controls="Renderer_Chart"     data-renderer-name="Chart"    aria-selected="false">Charts</a></li>
+        <li class="nav-item" role="presentation"><a class="nav-link action-filter-by-renderer-name"        id="Renderer_Table"    data-toggle="pill" href="javascript:;" role="tab" aria-controls="Renderer_Table"     data-renderer-name="Table"    aria-selected="false">Listings</a></li>
+        <li class="nav-item" role="presentation"><a class="nav-link action-filter-by-renderer-name"        id="Renderer_Progress" data-toggle="pill" href="javascript:;" role="tab" aria-controls="Renderer_Progress"  data-renderer-name="Progress" aria-selected="false">Processes</a></li>
+        <li class="nav-item" role="presentation"><a class="nav-link action-filter-by-renderer-name"        id="Renderer_Value"    data-toggle="pill" href="javascript:;" role="tab" aria-controls="Renderer_Value"     data-renderer-name="Value"    aria-selected="false">Indicators</a></li>
       </ul>
       <form class="form-inline my-2 my-lg-0">
         <div class="btn-group mr-2" role="group" aria-label="Basic example">
@@ -77,10 +78,11 @@
   <script src="/3rdparty/requirejs/require.js"></script>
   <script src="/3rdparty/rgbcolor/rgbcolor.js"></script>
 
-  <script src="/js/src/renderers/Renderer_Custom.js"></script>
-  <script src="/js/src/renderers/Renderer_Chart.js"></script>
-  <script src="/js/src/renderers/Renderer_Progress.js"></script>
-  <script src="/js/src/renderers/Renderer_Table.js"></script>
+  <script src="/js/src/renderers/CustomRenderer.js"></script>
+  <script src="/js/src/renderers/ChartRenderer.js"></script>
+  <script src="/js/src/renderers/ProgressRenderer.js"></script>
+  <script src="/js/src/renderers/TableRenderer.js"></script>
+  <script src="/js/src/renderers/ValueRenderer.js"></script>
   <script src="/js/src/index.js"></script>
 -->
 

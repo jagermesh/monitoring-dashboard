@@ -97,6 +97,12 @@ body[data-theme="dark"] .widget-footer {
 
 .widget-footer .widget-footer-tags {
   margin-left: 6px;
+  font-weight: normal;
+  background-color: darkslategray;
+  padding-left: 6px;
+  padding-right: 6px;
+  border-radius: 3px;
+  color: white;
 }
 
 .widget-detached {

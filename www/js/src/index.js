@@ -154,10 +154,12 @@ $(function() {
       event.stopPropagation();
     });
 
-    $('#mainContainer').on('click', '.widget', function() {
-      let widget = $(this).closest('.widget');
-      widget.addClass('widget-detached');
-      $('body').addClass('widget-detached-activated');
+    $('#mainContainer').on('click', '.widget', function(event) {
+      if (event.target && (event.target.tagName !== 'A')) {
+        let widget = $(this).closest('.widget');
+        widget.addClass('widget-detached');
+        $('body').addClass('widget-detached-activated');
+      }
     });
 
     $('#backDrop').on('click', function() {

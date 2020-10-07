@@ -49,8 +49,8 @@ class MonitoringDashboard {
 
     backEndServer.on('connection', function (socket) {
       let connectionInfo = {
-          id:      socket.id
-        , address: socket.handshake.address.replace('::1', '127.0.0.1').replace('::ffff:', '')
+        id: socket.id,
+        address: socket.handshake.address.replace('::1', '127.0.0.1').replace('::ffff:', ''),
       };
       _this.log('New connection', connectionInfo);
       socket.on('registerObserver', function(data) {

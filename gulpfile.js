@@ -8,19 +8,6 @@ const merge  = require('merge-stream');
 const config = {
   jshint: { src: ['*.js', '!node_modules/**/*.js'] }
 , concat: [
-    // { src: [ 'node_modules/jquery/dist/jquery.min.js'
-    //        , 'node_modules/bootstrap/dist/js/bootstrap.bundle.min.js'
-    //        , 'node_modules/handlebars/dist/handlebars.min.js'
-    //        , 'node_modules/flot/dist/es5/jquery.flot.js'
-    //        , 'node_modules/chart.js/dist/Chart.bundle.min.js'
-    //        , 'node_modules/socket.io-client/dist/socket.io.js'
-    //        , 'node_modules/requirejs/require.js'
-    //        , 'www/js/src/renderers/Renderer_Custom.js'
-    //        , 'www/js/src/renderers/Renderer_Chart.js'
-    //        , 'www/js/src/renderers/Renderer_Progress.js'
-    //        , 'www/js/src/renderers/Renderer_Table.js'
-    //        , 'www/js/src/index.js'
-    //        ]
     { src: [ 'www/3rdparty/jquery/jquery.min.js'
            , 'www/3rdparty/bootstrap/js/bootstrap.bundle.min.js'
            , 'www/3rdparty/handlebars/handlebars.min.js'

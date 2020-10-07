@@ -8723,7 +8723,7 @@ class CustomRenderer {
             {{sensorInfo.sensorLocation}}
           </div>
           <div class="widget-footer-sub-title float-right">
-            {{metricConfig.filter}}
+            {{metricConfig.settings}}
           </div>
         </div>
       </div>
@@ -9038,7 +9038,7 @@ class TableRenderer extends CustomRenderer {
     const _this = this;
 
     const bodyTemplate = Handlebars.compile(`
-      <table class="widget-table table table-condensed table-striped" style="width:100%;font-size:8pt;font-family:monospace,Courier;line-height:1.2em;">
+      <table class="widget-table table table-condensed table-striped table-bordered" style="width:100%;font-size:8pt;font-family:monospace,Courier;line-height:1.2em;">
         <thead class="table-header"></thead>
         <tbody class="table-body"><tr><td>No data</td></tr></tbody>
       </table>
@@ -9069,12 +9069,20 @@ class TableRenderer extends CustomRenderer {
         data.table.body.map(function(row) {
           tableBody += '<tr>';
           row.map(function(cell) {
-            let value = $(`<span>${cell}</span>`).text();
-            tableBody += `<td>${value}</td>`;
+            let dom = $(`<div>${cell}</div>`);
+            dom.find('script,iframe,style').remove();
+            let value = dom.html();
+            let style = '';
+            if (/^[0-9][0-9.]*?([a-zA-Z]{0,2}|[%])$/i.test(value)) {
+              style = 'style="text-align:right;"';
+            }
+            tableBody += `<td ${style}>${value}</td>`;
           });
           tableBody += '</tr>';
         });
         _this.control_TableBody.html(tableBody);
+      } else {
+        _this.control_TableBody.html('');
       }
     }
   }
@@ -9110,7 +9118,10 @@ class ValueRenderer extends CustomRenderer {
 
     if (data.values) {
       data.values.map(function(value) {
-        let text = value.formatted ? value.formatted : value.raw;
+        let cell = value.formatted ? value.formatted : value.raw;
+        let dom = $(`<div>${cell}</div>`);
+        dom.find('script,iframe,style').remove();
+        let text = dom.html();
         text = `<div style="font-size:64px;line-height:1em;">${text}</div>`;
         if (value.label) {
           text = `<span style="font-size: 14px">${value.label}</span>${text}`;
@@ -9288,10 +9299,12 @@ $(function() {
       event.stopPropagation();
     });
 
-    $('#mainContainer').on('click', '.widget', function() {
-      let widget = $(this).closest('.widget');
-      widget.addClass('widget-detached');
-      $('body').addClass('widget-detached-activated');
+    $('#mainContainer').on('click', '.widget', function(event) {
+      if (event.target && (event.target.tagName !== 'A')) {
+        let widget = $(this).closest('.widget');
+        widget.addClass('widget-detached');
+        $('body').addClass('widget-detached-activated');
+      }
     });
 
     $('#backDrop').on('click', function() {

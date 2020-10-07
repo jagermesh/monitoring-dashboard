@@ -28,7 +28,10 @@ class ValueRenderer extends CustomRenderer {
 
     if (data.values) {
       data.values.map(function(value) {
-        let text = value.formatted ? value.formatted : value.raw;
+        let cell = value.formatted ? value.formatted : value.raw;
+        let dom = $(`<div>${cell}</div>`);
+        dom.find('script,iframe,style').remove();
+        let text = dom.html();
         text = `<div style="font-size:64px;line-height:1em;">${text}</div>`;
         if (value.label) {
           text = `<span style="font-size: 14px">${value.label}</span>${text}`;

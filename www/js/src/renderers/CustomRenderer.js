@@ -24,7 +24,7 @@ class CustomRenderer {
             {{sensorInfo.sensorLocation}}
           </div>
           <div class="widget-footer-sub-title float-right">
-            {{metricConfig.filter}}
+            {{metricConfig.settings}}
           </div>
         </div>
       </div>

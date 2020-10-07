@@ -8722,6 +8722,9 @@ class CustomRenderer {
           <div class="widget-footer-title float-left">
             {{sensorInfo.sensorLocation}}
           </div>
+          <div class="widget-footer-tags float-right">
+            <span class="widget-title-tags badge badge-pill badge-warning">{{metricInfo.metricTags}}</span>
+          </div>
           <div class="widget-footer-sub-title float-right">
             {{metricConfig.settings}}
           </div>

@@ -88,11 +88,15 @@ body[data-theme="dark"] .widget-footer {
   background-color: #202226;
 }
 
-.widget-footer .widget-footer-title, .widget-footer .widget-footer-sub-title {
+.widget-footer .widget-footer-title, .widget-footer .widget-footer-sub-title, .widget-footer .widget-footer-tags {
   overflow: hidden;
   font-size: 12px;
   height: 18px;
   word-break: break-all;
+}
+
+.widget-footer .widget-footer-tags {
+  margin-left: 6px;
 }
 
 .widget-detached {

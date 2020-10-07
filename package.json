@@ -48,5 +48,5 @@
     "release": "npm install && gulp build && np --no-2fa",
     "test": "echo \"OK\""
   },
-  "version": "1.0.30"
+  "version": "1.0.31"
 }

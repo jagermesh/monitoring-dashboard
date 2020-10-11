@@ -88,6 +88,31 @@ body[data-theme="dark"] .widget-footer {
   background-color: #202226;
 }
 
+body[data-theme="dark"] .widget-body .c3-chart-arc .c3-gauge-value {
+  fill: #999;
+}
+
+body[data-theme="dark"] .widget-body .c3-chart-arcs .c3-chart-arcs-gauge-min {
+  fill: #999;
+}
+
+body[data-theme="dark"] .widget-body .c3-chart-arcs .c3-chart-arcs-gauge-max {
+  fill: #999;
+}
+
+body[data-theme="dark"] .widget-body .c3-chart-arcs .c3-chart-arcs-background {
+  fill: #333;
+  stroke: #444;
+}
+
+body[data-theme="dark"] .widget-body .c3-chart-arcs .c3-chart-arc path {
+  stroke: #AAA;
+}
+
+body[data-theme="dark"] .widget-body .c3-legend-item {
+  fill: #999;
+}
+
 .widget-footer .widget-footer-title, .widget-footer .widget-footer-sub-title, .widget-footer .widget-footer-tags {
   overflow: hidden;
   font-size: 12px;

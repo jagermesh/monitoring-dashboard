@@ -123,9 +123,9 @@ class MonitoringDashboard {
 
     app.get('/js/config.js', function(req, res){
       const body = `
-        define(function (require) {
+        function MonitoringSensorConfig() {
           return { backendUrl: "${_this.dashboardConfig.backEndUrl}" };
-        });
+        }
       `;
       res.setHeader('Content-Type', 'text/javascript');
       res.setHeader('Content-Length', body.length);

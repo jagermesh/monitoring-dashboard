@@ -1,5 +1,7 @@
+/* global MonitoringSensorConfig */
+
 $(function() {
-  requirejs(['js/config.js'], function(config) {
+  let config = MonitoringSensorConfig();
 
     function getTheme() {
       return $('body').attr('data-theme');
@@ -22,6 +24,7 @@ $(function() {
       , Progress: ProgressRenderer
       , Table:    TableRenderer
       , Value:    ValueRenderer
+      , Gauge:    GaugeRenderer
     };
 
     let widgets = [];
@@ -167,5 +170,4 @@ $(function() {
       $('body').removeClass('widget-detached-activated');
     });
 
-  });
 });

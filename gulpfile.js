@@ -15,6 +15,7 @@ const config = {
            , 'www/3rdparty/chartjs/Chart.bundle.min.js'
            , 'www/3rdparty/socket.io/socket.io.js'
            , 'www/3rdparty/rgbcolor/rgbcolor.js'
+           , 'www/3rdparty/momentjs/moment.min.js'
            , 'www/3rdparty/d3/d3.min.js'
            , 'www/3rdparty/c3/c3.min.js'
            , 'www/js/src/renderers/CustomRenderer.js'

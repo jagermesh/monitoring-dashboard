@@ -63,6 +63,15 @@ class GaugeRenderer extends CustomRenderer {
     return _this.metricDescriptor.metricConfig.lineColor;
   }
 
+  draw(columns, colors) {
+    const _this = this;
+
+    _this.chart.load({
+      columns: columns,
+      colors: colors
+    });
+  }
+
   pushData(data) {
     super.pushData(data);
 
@@ -79,9 +88,8 @@ class GaugeRenderer extends CustomRenderer {
       colors[_this.metricDescriptor.metricConfig.datasets[i]] = _this.getColor(i, data.points[i]);
     }
     if (data.values && (data.values.length > 0)) {
-      _this.chart.load({
-        columns: columns,
-        colors: colors
+      _this.requestAnimationFrame(function() {
+        _this.draw(columns, colors);
       });
     }
   }

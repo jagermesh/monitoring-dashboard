@@ -117,6 +117,7 @@ class ChartRenderer extends CustomRenderer {
         }
       }
     });
+
   }
 
   getLabels() {
@@ -173,10 +174,10 @@ class ChartRenderer extends CustomRenderer {
     return result;
   }
 
-  draw() {
+  draw(datasets) {
     const _this = this;
 
-    _this.chart.data.datasets = _this.getDataSets();
+    _this.chart.data.datasets = datasets;
     _this.chart.update();
   }
 
@@ -195,7 +196,12 @@ class ChartRenderer extends CustomRenderer {
       _this.statData = _this.statData.slice(1);
     }
     _this.statData.push(data.points);
-    _this.draw();
+
+    const datasets = _this.getDataSets();
+
+    _this.requestAnimationFrame(function() {
+      _this.draw(datasets);
+    });
   }
 
   setTheme(theme) {

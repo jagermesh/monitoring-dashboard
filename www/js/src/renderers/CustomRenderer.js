@@ -4,9 +4,6 @@ class CustomRenderer {
     this.metricDescriptor = Object.assign({ }, metricDescriptor);
     this.settings = Object.assign({ }, settings);
 
-    this.sensorUid = this.metricDescriptor.sensorInfo.sensorUid;
-    this.metricUid = this.metricDescriptor.metricInfo.metricUid;
-
     const widgetTemplate = Handlebars.compile(`
       <div class="widget card mb-3 mr-3" data-ip="{{sensorInfo.sensorLocation}}" data-uid="{{metricInfo.metricUid}}" data-metric-name="{{metricInfo.metricName}}" data-renderer-name="{{metricInfo.metricRenderer}}">
         <div class="widget-header card-header pl-2 pt-1 pb-1 pr-2">

@@ -9,15 +9,12 @@ const app = express();
 class MonitoringDashboard {
 
   constructor(config) {
-
     const _this = this;
 
     _this.dashboardConfig = Object.assign({ backEndPort: 8081, frontEndPort: 8083, backEndUrl: 'http://localhost:8081', hubUrl: 'http://localhost:8082' }, config);
-
   }
 
   log(message, attributes, isError) {
-
     const logTag = 'DSB';
     let text = colors.yellow(`[${logTag}]`);
     if (isError) {
@@ -28,15 +25,13 @@ class MonitoringDashboard {
       text += ' ' + colors.green(JSON.stringify(attributes));
     }
     console.log(text);
-
   }
 
   start() {
-
     const _this = this;
 
     let observers = Object.create({ });
-    let metrics   = Object.create({ });
+    let metrics = Object.create({ });
 
     // Backend
 
@@ -64,7 +59,6 @@ class MonitoringDashboard {
           socket.emit('hubOffline');
         }
         _this.log('Observer registered', { observerId: observerInfo.id });
-
         setTimeout(function() {
           _this.log('Sending metrics list to observers');
           for (let metricUid in metrics) {
@@ -145,12 +139,14 @@ class MonitoringDashboard {
       _this.log('Registering as observer');
       hubServer.emit('registerObserver');
     });
+
     hubServer.on('observerRegistered', function () {
       _this.log('Observer registration acknowledged');
       for(let observerId in observers) {
         observers[observerId].socket.emit('hubOnline');
       }
     });
+
     hubServer.on('registerMetric', function (metricDescriptor) {
       _this.log('Metric registered', { metricUid: metricDescriptor.metricInfo.metricUid });
       metrics[metricDescriptor.metricInfo.metricUid] = { metricDescriptor: metricDescriptor };
@@ -158,6 +154,7 @@ class MonitoringDashboard {
         observers[observerId].socket.emit('registerMetric', metricDescriptor);
       }
     });
+
     hubServer.on('metricData', function (data) {
       let metric = metrics[data.metricUid];
       if (metric) {
@@ -167,6 +164,7 @@ class MonitoringDashboard {
         }
       }
     });
+
     hubServer.on('unregisterMetric', function (metricDescriptor) {
       let metric = metrics[metricDescriptor.metricInfo.metricUid];
       delete metrics[metricDescriptor.metricInfo.metricUid];
@@ -194,7 +192,6 @@ class MonitoringDashboard {
         observer.socket.emit('hubOffline');
       }
     });
-
   }
 
 }

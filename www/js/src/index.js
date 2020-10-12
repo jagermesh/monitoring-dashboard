@@ -20,7 +20,7 @@ $(function() {
   }
 
   const renderers = {
-      Chart:    ChartRenderer_C3
+      Chart:    (document.location.search.indexOf('chartjs') === -1 ? ChartRenderer_C3 : ChartRenderer_ChartJS)
     , Progress: ProgressRenderer
     , Table:    TableRenderer
     , Value:    ValueRenderer

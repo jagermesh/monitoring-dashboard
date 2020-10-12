@@ -12,8 +12,6 @@ class GaugeRenderer extends CustomRenderer {
 
     _this.widgetContainer.find('.widget-body').append(bodyTemplate());
 
-    // console.log(_this.metricDescriptor.metricInfo.metricName);
-
     let min = (this.metricDescriptor.metricConfig.suggestedMin ? this.metricDescriptor.metricConfig.suggestedMin : (this.metricDescriptor.metricConfig.min ? this.metricDescriptor.metricConfig.min :   0));
     let max = (this.metricDescriptor.metricConfig.suggestedMax ? this.metricDescriptor.metricConfig.suggestedMax : (this.metricDescriptor.metricConfig.max ? this.metricDescriptor.metricConfig.max : 100));
 

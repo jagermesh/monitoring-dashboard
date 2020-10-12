@@ -20,7 +20,7 @@ $(function() {
   }
 
   const renderers = {
-      Chart:    ChartRenderer
+      Chart:    ChartRenderer_C3
     , Progress: ProgressRenderer
     , Table:    TableRenderer
     , Value:    ValueRenderer

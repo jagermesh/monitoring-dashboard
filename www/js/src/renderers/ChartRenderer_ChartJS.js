@@ -1,4 +1,4 @@
-class ChartRenderer extends CustomRenderer {
+class ChartRenderer_ChartJS extends CustomRenderer {
 
   constructor(container, metricDescriptor, settings) {
     super(container, metricDescriptor, settings);

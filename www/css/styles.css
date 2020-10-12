@@ -109,6 +109,20 @@ body[data-theme="dark"] .widget-body .c3-chart-arcs .c3-chart-arc path {
   stroke: #AAA;
 }
 
+body[data-theme="dark"] .widget-body .c3-axis {
+  stroke: #AAA;
+}
+
+body[data-theme="dark"] .widget-body .c3-grid line {
+  stroke: #333;
+  stroke-dasharray: 0 0;
+}
+
+.widget-body .c3-grid line {
+  stroke: #DDD;
+  stroke-dasharray: 0 0;
+}
+
 body[data-theme="dark"] .widget-body .c3-legend-item {
   fill: #999;
 }

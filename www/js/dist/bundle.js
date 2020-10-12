@@ -9436,7 +9436,7 @@ $(function() {
   }
 
   const renderers = {
-      Chart:    (document.location.search.indexOf('chartjs') === -1 ? ChartRenderer_C3 : ChartRenderer_ChartJS)
+      Chart:    (document.location.search.indexOf('c3') === -1 ? ChartRenderer_ChartJS : ChartRenderer_C3)
     , Progress: ProgressRenderer
     , Table:    TableRenderer
     , Value:    ValueRenderer

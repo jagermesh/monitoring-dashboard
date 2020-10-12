@@ -18,171 +18,71 @@ const config = {
   , metrics: [
       // CPU
       { name: 'CPU'
-      , rendererName: 'Chart'
+      , rendererName: 'Chart,Value,Table,Gauge'
       },
       { name: 'CPU'
-      , rendererName: 'Chart'
-      , settings: {
-          processes: 'php,node'
-        }
-      },
-      { name: 'CPU'
-      , rendererName: 'Value'
-      },
-      { name: 'CPU'
-      , rendererName: 'Value'
-      , settings: {
-          processes: 'php,node'
-        }
-      },
-      { name: 'CPU'
-      , rendererName: 'Table'
-      },
-      { name: 'CPU'
-      , rendererName: 'Table'
-      , settings: {
-          processes: 'php,node'
-        }
-      },
-      { name: 'CPU'
-      , rendererName: 'Gauge'
-      },
-      { name: 'CPU'
-      , rendererName: 'Gauge'
+      , rendererName: 'Chart,Value,Table,Gauge'
       , settings: {
           processes: 'php,node'
         }
       },
       // RAM
       { name: 'RAM'
-      , rendererName: 'Chart'
-      },
-      { name: 'RAM'
-      , rendererName: 'Value'
-      },
-      { name: 'RAM'
-      , rendererName: 'Table'
-      },
-      { name: 'RAM'
-      , rendererName: 'Gauge'
+      , rendererName: 'Chart,Value,Table,Gauge'
       },
       // LA
       { name: 'LA'
-      , rendererName: 'Chart'
-      },
-      { name: 'LA'
-      , rendererName: 'Value'
-      },
-      { name: 'LA'
-      , rendererName: 'Table'
-      },
-      { name: 'LA'
-      , rendererName: 'Gauge'
+      , rendererName: 'Chart,Value,Table,Gauge'
       },
       // Processes
       { name: 'Processes'
-      , rendererName: 'Chart'
+      , rendererName: 'Chart,Value,Table'
       },
       { name: 'Processes'
-      , rendererName: 'Value'
-      },
-      { name: 'Processes'
-      , rendererName: 'Table'
-      },
-      { name: 'Processes'
-      , rendererName: 'Chart'
-      , settings: {
-          processes: 'php,node'
-        }
-      },
-      { name: 'Processes'
-      , rendererName: 'Value'
-      , settings: {
-          processes: 'php,node'
-        }
-      },
-      { name: 'Processes'
-      , rendererName: 'Table'
+      , rendererName: 'Chart,Value,Table'
       , settings: {
           processes: 'php,node'
         }
       },
       // HDD
       { name: 'HDD'
-      , rendererName: 'Chart'
+      , rendererName: 'Chart,Value,Table'
       },
       { name: 'HDD'
-      , rendererName: 'Table'
-      },
-      { name: 'HDD'
-      , rendererName: 'Value'
-      },
-      { name: 'HDD'
-      , rendererName: 'Chart'
+      , rendererName: 'Chart,Value,Table'
       , settings: {
           mounts: '/System/Volumes/Data'
         , threshold: 80
         }
       },
-      { name: 'HDD'
-      , rendererName: 'Table'
+      // Jenkins
+      { name: 'Jenkins'
+      , rendererName: 'Chart,Value,Table'
       , settings: {
-          mounts: '/System/Volumes/Data'
-        }
-      },
-      { name: 'HDD'
-      , rendererName: 'Value'
-      , settings: {
-          mounts: '/System/Volumes/Data'
+          apiUrl: 'http://localhost:8080/job/project/',
+          username: 'admin',
+          password: '11acff4a9f050afc3787c908c0812c3c8d',
         }
       },
       // MySQLProcesses
       { name: 'MySQLProcesses'
-      , rendererName: 'Chart'
+      , rendererName: 'Chart,Value,Table'
       , settings: {
           host: 'localhost'
         , user: 'root'
         , password: ''
         }
       },
-      { name: 'MySQLProcesses'
-      , rendererName: 'Table'
+      // MySQL
+      { name: 'MySQL'
+      , rendererName: 'Chart,Value,Table'
       , settings: {
-          host: 'localhost'
-        , user: 'root'
-        , password: ''
-        }
-      },
-      { name: 'MySQLProcesses'
-      , rendererName: 'Value'
-      , settings: {
-          host: 'localhost'
-        , user: 'root'
-        , password: ''
-        }
-      },
-      { name: 'Jenkins'
-      , rendererName: 'Chart'
-      , settings: {
-          apiUrl: 'http://localhost:8080/job/project/',
-          username: 'admin',
-          password: '11acff4a9f050afc3787c908c0812c3c8d',
-        }
-      },
-      { name: 'Jenkins'
-      , rendererName: 'Table'
-      , settings: {
-          apiUrl: 'http://localhost:8080/job/project/',
-          username: 'admin',
-          password: '11acff4a9f050afc3787c908c0812c3c8d',
-        }
-      },
-      { name: 'Jenkins'
-      , rendererName: 'Value'
-      , settings: {
-          apiUrl: 'http://localhost:8080/job/project/',
-          username: 'admin',
-          password: '11acff4a9f050afc3787c908c0812c3c8d',
+          host: 'localhost',
+          user: 'root',
+          password: '',
+          database: '',
+          sql: 'SHOW PROCESSLIST',
+          description: 'MySQL Process List'
         }
       },
     ]

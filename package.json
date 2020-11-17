@@ -16,7 +16,7 @@
     "monitoring-hub": "^1.0.20",
     "monitoring-progress-logger": "^1.0.12",
     "monitoring-sensor": "^1.0.26",
-    "terser": "^5.3.8"
+    "terser": "^5.4.0"
   },
   "dependencies": {
     "basic-auth": "^2.0.1",

@@ -1,7 +1,7 @@
 const colors       = require('colors');
 const express      = require('express');
 const basicAuth    = require('basic-auth');
-const socketServer = require('socket.io');
+const socketServer = require('socket.io')();
 const socketClient = require('socket.io-client');
 
 const app = express();

@@ -13,9 +13,9 @@
     "gulp-terser": "^2.0.0",
     "jshint": "^2.12.0",
     "merge-stream": "^2.0.0",
-    "monitoring-hub": "^1.0.20",
-    "monitoring-progress-logger": "^1.0.12",
-    "monitoring-sensor": "^1.0.26",
+    "monitoring-hub": "^1.0.22",
+    "monitoring-progress-logger": "^1.0.13",
+    "monitoring-sensor": "^1.0.27",
     "terser": "^5.5.1"
   },
   "dependencies": {
@@ -32,7 +32,9 @@
     "jquery": "^3.5.1",
     "moment": "^2.29.1",
     "popper.js": "^1.16.1",
-    "requirejs": "^2.3.6"
+    "requirejs": "^2.3.6",
+    "socket.io": "2.3.0",
+    "socket.io-client": "^3.0.4"
   },
   "deprecated": false,
   "description": "Monitoring Dashboard",

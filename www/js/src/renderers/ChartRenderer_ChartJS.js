@@ -13,8 +13,8 @@ class ChartRenderer_ChartJS extends CustomRenderer {
 
     _this.widgetContainer.find('.widget-body').append(bodyTemplate());
 
-    _this.control_Chart    = _this.widgetContainer.find('.widget-body').find('.chart');
-    _this.control_Context  = _this.control_Chart.find('canvas')[0].getContext('2d');
+    _this.control_Chart = _this.widgetContainer.find('.widget-body').find('.chart');
+    _this.control_Context = _this.control_Chart.find('canvas')[0].getContext('2d');
 
     _this.maxPeriod = 30;
 
@@ -51,43 +51,49 @@ class ChartRenderer_ChartJS extends CustomRenderer {
         const g = Math.floor(Math.random() * 255);
         const b = Math.floor(Math.random() * 255);
         lineColor = `rgb(${r},${g},${b})`;
-        fillColor = `rgb(${r},${g},${b},${opacity})` ;
+        fillColor = `rgb(${r},${g},${b},${opacity})`;
       } else {
         lineColor = colors[usedColors];
         usedColors++;
         let color = new RGBColor(lineColor);
         fillColor = `rgb(${color.r},${color.g},${color.b},${opacity})`;
       }
-      return { lineColor: lineColor, fillColor: fillColor };
+      return {
+        lineColor: lineColor,
+        fillColor: fillColor
+      };
     }
 
     _this.chartDataSets = [];
 
     _this.metricDescriptor.metricConfig.datasets.map(function(dataset, index) {
-      let color = index === 0 ? { lineColor: _this.metricDescriptor.metricConfig.lineColor, fillColor: _this.metricDescriptor.metricConfig.fillColor } : randomColor();
+      let color = index === 0 ? {
+        lineColor: _this.metricDescriptor.metricConfig.lineColor,
+        fillColor: _this.metricDescriptor.metricConfig.fillColor
+      } : randomColor();
       _this.chartDataSets.push({
-          data:            []
-        , label:           dataset
-        , borderColor:     color.lineColor
-        , backgroundColor: color.fillColor
-        , fill:            (index === 0 ? 'start' : false)
-        , borderWidth:     2
-        , pointRadius:     1
+        data: [],
+        label: dataset,
+        borderColor: color.lineColor,
+        backgroundColor: color.fillColor,
+        fill: (index === 0 ? 'start' : false),
+        borderWidth: 2,
+        pointRadius: 1
       });
     });
 
     _this.chart = new Chart(_this.control_Context, {
-      type: 'line'
-    , data: {
-          labels:   _this.getLabels()
-        , datasets: _this.getDataSets()
-      }
-    , options: {
+      type: 'line',
+      data: {
+        labels: _this.getLabels(),
+        datasets: _this.getDataSets()
+      },
+      options: {
         legend: {
-            display:  isMultipleDataSets
-          , position: 'bottom'
-        }
-      , scales: {
+          display: isMultipleDataSets,
+          position: 'bottom'
+        },
+        scales: {
           xAxes: [{
             display: true,
             gridLines: {
@@ -111,8 +117,8 @@ class ChartRenderer_ChartJS extends CustomRenderer {
               max: _this.metricDescriptor.metricConfig.max
             }
           }]
-        }
-      , animation: {
+        },
+        animation: {
           duration: 0 // general animation time
         }
       }
@@ -154,11 +160,11 @@ class ChartRenderer_ChartJS extends CustomRenderer {
 
       if (last) {
         if (_this.metricDescriptor.metricConfig.ranges) {
-          for(let i = _this.metricDescriptor.metricConfig.ranges.length-1; i >= 0; i--) {
+          for (let i = _this.metricDescriptor.metricConfig.ranges.length - 1; i >= 0; i--) {
             if (last >= _this.metricDescriptor.metricConfig.ranges[i].value) {
-              result[0].borderColor     = _this.metricDescriptor.metricConfig.ranges[i].lineColor;
+              result[0].borderColor = _this.metricDescriptor.metricConfig.ranges[i].lineColor;
               result[0].backgroundColor = _this.metricDescriptor.metricConfig.ranges[i].fillColor;
-              found  = true;
+              found = true;
               break;
             }
           }
@@ -166,7 +172,7 @@ class ChartRenderer_ChartJS extends CustomRenderer {
       }
 
       if (!found) {
-        result[0].borderColor     = _this.metricDescriptor.metricConfig.lineColor;
+        result[0].borderColor = _this.metricDescriptor.metricConfig.lineColor;
         result[0].backgroundColor = _this.metricDescriptor.metricConfig.fillColor;
       }
     }

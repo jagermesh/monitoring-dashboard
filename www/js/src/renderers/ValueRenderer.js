@@ -37,7 +37,7 @@ class ValueRenderer extends CustomRenderer {
           text = `<span style="font-size: 14px">${value.label}</span>${text}`;
         }
         if (value.threshold && _this.metricDescriptor.metricConfig.ranges) {
-          for(let i = _this.metricDescriptor.metricConfig.ranges.length-1; i >= 0; i--) {
+          for (let i = _this.metricDescriptor.metricConfig.ranges.length - 1; i >= 0; i--) {
             if (value.threshold >= _this.metricDescriptor.metricConfig.ranges[i].value) {
               text = `<div style="color:${_this.metricDescriptor.metricConfig.ranges[i].lineColor}">${text}</div>`;
               break;

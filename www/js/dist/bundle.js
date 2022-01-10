@@ -8702,8 +8702,8 @@ function RGBColor(color_string)
 class CustomRenderer {
 
   constructor(container, metricDescriptor, settings) {
-    this.metricDescriptor = Object.assign({ }, metricDescriptor);
-    this.settings = Object.assign({ }, settings);
+    this.metricDescriptor = Object.assign({}, metricDescriptor);
+    this.settings = Object.assign({}, settings);
 
     const widgetTemplate = Handlebars.compile(`
       <div class="widget card mb-3 mr-3" data-ip="{{sensorInfo.sensorLocation}}" data-uid="{{metricInfo.metricUid}}" data-metric-name="{{metricInfo.metricName}}" data-renderer-name="{{metricInfo.metricRenderer}}">
@@ -8767,11 +8767,11 @@ class CustomRenderer {
 
   requestAnimationFrame(callback, element) {
     let requestAnimationFrame =
-      window.requestAnimationFrame        ||
-      window.webkitRequestAnimationFrame  ||
-      window.mozRequestAnimationFrame     ||
-      window.oRequestAnimationFrame       ||
-      window.msRequestAnimationFrame      ||
+      window.requestAnimationFrame ||
+      window.webkitRequestAnimationFrame ||
+      window.mozRequestAnimationFrame ||
+      window.oRequestAnimationFrame ||
+      window.msRequestAnimationFrame ||
       function(callback, element) {
         let currTime = new Date().getTime();
         let timeToCall = Math.max(0, 16 - (currTime - lastAnimationFramtTime));
@@ -8804,7 +8804,7 @@ class ChartRenderer_C3 extends CustomRenderer {
 
     _this.widgetContainer.find('.widget-body').append(bodyTemplate());
 
-    let min = (this.metricDescriptor.metricConfig.suggestedMin ? this.metricDescriptor.metricConfig.suggestedMin : (this.metricDescriptor.metricConfig.min ? this.metricDescriptor.metricConfig.min :   0));
+    let min = (this.metricDescriptor.metricConfig.suggestedMin ? this.metricDescriptor.metricConfig.suggestedMin : (this.metricDescriptor.metricConfig.min ? this.metricDescriptor.metricConfig.min : 0));
     let max = (this.metricDescriptor.metricConfig.suggestedMax ? this.metricDescriptor.metricConfig.suggestedMax : (this.metricDescriptor.metricConfig.max ? this.metricDescriptor.metricConfig.max : 100));
 
     _this.control_Chart = _this.widgetContainer.find('.widget-body').find('.chart');
@@ -8829,7 +8829,7 @@ class ChartRenderer_C3 extends CustomRenderer {
         x: 'timestamp',
         xFormat: '%Y-%m-%d %H:%M:%S',
         columns: [
-            // ['timestamp', moment().format('YYYY-MM-DD HH:mm:ss')],
+          // ['timestamp', moment().format('YYYY-MM-DD HH:mm:ss')],
         ],
         labels: false,
         types: dataTypes,
@@ -8881,14 +8881,14 @@ class ChartRenderer_C3 extends CustomRenderer {
     const _this = this;
 
     if (_this.metricDescriptor.metricConfig.ranges) {
-      for(let i = _this.metricDescriptor.metricConfig.ranges.length-1; i >= 0; i--) {
+      for (let i = _this.metricDescriptor.metricConfig.ranges.length - 1; i >= 0; i--) {
         if (value >= _this.metricDescriptor.metricConfig.ranges[i].value) {
           return _this.metricDescriptor.metricConfig.ranges[i].lineColor;
         }
       }
     }
 
-    return (index === 0 ? _this.metricDescriptor.metricConfig.lineColor : _this.getAvaialbleColor(index-1));
+    return (index === 0 ? _this.metricDescriptor.metricConfig.lineColor : _this.getAvaialbleColor(index - 1));
   }
 
   draw(columns, colors) {
@@ -8908,7 +8908,10 @@ class ChartRenderer_C3 extends CustomRenderer {
     while (_this.statData.length > _this.maxPeriod) {
       _this.statData = _this.statData.slice(1);
     }
-    _this.statData.push({ x: moment().format('YYYY-MM-DD HH:mm:ss'), values: data.points });
+    _this.statData.push({
+      x: moment().format('YYYY-MM-DD HH:mm:ss'),
+      values: data.points
+    });
 
     // let colors = {};
     let columns = [];
@@ -8952,8 +8955,8 @@ class ChartRenderer_ChartJS extends CustomRenderer {
 
     _this.widgetContainer.find('.widget-body').append(bodyTemplate());
 
-    _this.control_Chart    = _this.widgetContainer.find('.widget-body').find('.chart');
-    _this.control_Context  = _this.control_Chart.find('canvas')[0].getContext('2d');
+    _this.control_Chart = _this.widgetContainer.find('.widget-body').find('.chart');
+    _this.control_Context = _this.control_Chart.find('canvas')[0].getContext('2d');
 
     _this.maxPeriod = 30;
 
@@ -8990,43 +8993,49 @@ class ChartRenderer_ChartJS extends CustomRenderer {
         const g = Math.floor(Math.random() * 255);
         const b = Math.floor(Math.random() * 255);
         lineColor = `rgb(${r},${g},${b})`;
-        fillColor = `rgb(${r},${g},${b},${opacity})` ;
+        fillColor = `rgb(${r},${g},${b},${opacity})`;
       } else {
         lineColor = colors[usedColors];
         usedColors++;
         let color = new RGBColor(lineColor);
         fillColor = `rgb(${color.r},${color.g},${color.b},${opacity})`;
       }
-      return { lineColor: lineColor, fillColor: fillColor };
+      return {
+        lineColor: lineColor,
+        fillColor: fillColor
+      };
     }
 
     _this.chartDataSets = [];
 
     _this.metricDescriptor.metricConfig.datasets.map(function(dataset, index) {
-      let color = index === 0 ? { lineColor: _this.metricDescriptor.metricConfig.lineColor, fillColor: _this.metricDescriptor.metricConfig.fillColor } : randomColor();
+      let color = index === 0 ? {
+        lineColor: _this.metricDescriptor.metricConfig.lineColor,
+        fillColor: _this.metricDescriptor.metricConfig.fillColor
+      } : randomColor();
       _this.chartDataSets.push({
-          data:            []
-        , label:           dataset
-        , borderColor:     color.lineColor
-        , backgroundColor: color.fillColor
-        , fill:            (index === 0 ? 'start' : false)
-        , borderWidth:     2
-        , pointRadius:     1
+        data: [],
+        label: dataset,
+        borderColor: color.lineColor,
+        backgroundColor: color.fillColor,
+        fill: (index === 0 ? 'start' : false),
+        borderWidth: 2,
+        pointRadius: 1
       });
     });
 
     _this.chart = new Chart(_this.control_Context, {
-      type: 'line'
-    , data: {
-          labels:   _this.getLabels()
-        , datasets: _this.getDataSets()
-      }
-    , options: {
+      type: 'line',
+      data: {
+        labels: _this.getLabels(),
+        datasets: _this.getDataSets()
+      },
+      options: {
         legend: {
-            display:  isMultipleDataSets
-          , position: 'bottom'
-        }
-      , scales: {
+          display: isMultipleDataSets,
+          position: 'bottom'
+        },
+        scales: {
           xAxes: [{
             display: true,
             gridLines: {
@@ -9050,8 +9059,8 @@ class ChartRenderer_ChartJS extends CustomRenderer {
               max: _this.metricDescriptor.metricConfig.max
             }
           }]
-        }
-      , animation: {
+        },
+        animation: {
           duration: 0 // general animation time
         }
       }
@@ -9093,11 +9102,11 @@ class ChartRenderer_ChartJS extends CustomRenderer {
 
       if (last) {
         if (_this.metricDescriptor.metricConfig.ranges) {
-          for(let i = _this.metricDescriptor.metricConfig.ranges.length-1; i >= 0; i--) {
+          for (let i = _this.metricDescriptor.metricConfig.ranges.length - 1; i >= 0; i--) {
             if (last >= _this.metricDescriptor.metricConfig.ranges[i].value) {
-              result[0].borderColor     = _this.metricDescriptor.metricConfig.ranges[i].lineColor;
+              result[0].borderColor = _this.metricDescriptor.metricConfig.ranges[i].lineColor;
               result[0].backgroundColor = _this.metricDescriptor.metricConfig.ranges[i].fillColor;
-              found  = true;
+              found = true;
               break;
             }
           }
@@ -9105,7 +9114,7 @@ class ChartRenderer_ChartJS extends CustomRenderer {
       }
 
       if (!found) {
-        result[0].borderColor     = _this.metricDescriptor.metricConfig.lineColor;
+        result[0].borderColor = _this.metricDescriptor.metricConfig.lineColor;
         result[0].backgroundColor = _this.metricDescriptor.metricConfig.fillColor;
       }
     }
@@ -9195,7 +9204,7 @@ class ProgressRenderer extends CustomRenderer {
     let text = '';
     operations.map(function(operation) {
       if (operation.total > 0) {
-        operation.percent = (operation.current/operation.total*100).toFixed(2);
+        operation.percent = (operation.current / operation.total * 100).toFixed(2);
       } else {
         operation.percent = 100;
       }
@@ -9303,7 +9312,7 @@ class ValueRenderer extends CustomRenderer {
           text = `<span style="font-size: 14px">${value.label}</span>${text}`;
         }
         if (value.threshold && _this.metricDescriptor.metricConfig.ranges) {
-          for(let i = _this.metricDescriptor.metricConfig.ranges.length-1; i >= 0; i--) {
+          for (let i = _this.metricDescriptor.metricConfig.ranges.length - 1; i >= 0; i--) {
             if (value.threshold >= _this.metricDescriptor.metricConfig.ranges[i].value) {
               text = `<div style="color:${_this.metricDescriptor.metricConfig.ranges[i].lineColor}">${text}</div>`;
               break;
@@ -9333,7 +9342,7 @@ class GaugeRenderer extends CustomRenderer {
 
     _this.widgetContainer.find('.widget-body').append(bodyTemplate());
 
-    let min = (this.metricDescriptor.metricConfig.suggestedMin ? this.metricDescriptor.metricConfig.suggestedMin : (this.metricDescriptor.metricConfig.min ? this.metricDescriptor.metricConfig.min :   0));
+    let min = (this.metricDescriptor.metricConfig.suggestedMin ? this.metricDescriptor.metricConfig.suggestedMin : (this.metricDescriptor.metricConfig.min ? this.metricDescriptor.metricConfig.min : 0));
     let max = (this.metricDescriptor.metricConfig.suggestedMax ? this.metricDescriptor.metricConfig.suggestedMax : (this.metricDescriptor.metricConfig.max ? this.metricDescriptor.metricConfig.max : 100));
 
     _this.control_Chart = _this.widgetContainer.find('.widget-body').find('.chart');
@@ -9343,7 +9352,7 @@ class GaugeRenderer extends CustomRenderer {
     _this.chart = c3.generate({
       bindto: _this.control_Chart[0],
       data: {
-        columns: [ ],
+        columns: [],
         type: 'gauge',
         labels: false,
       },
@@ -9372,7 +9381,7 @@ class GaugeRenderer extends CustomRenderer {
     const _this = this;
 
     if (_this.metricDescriptor.metricConfig.ranges) {
-      for(let i = _this.metricDescriptor.metricConfig.ranges.length-1; i >= 0; i--) {
+      for (let i = _this.metricDescriptor.metricConfig.ranges.length - 1; i >= 0; i--) {
         if (value >= _this.metricDescriptor.metricConfig.ranges[i].value) {
           return _this.metricDescriptor.metricConfig.ranges[i].lineColor;
         }
@@ -9399,7 +9408,7 @@ class GaugeRenderer extends CustomRenderer {
     let colors = {};
     let columns = [];
     // for(let i = 0; i < _this.metricDescriptor.metricConfig.datasets.length; i++) {
-    for(let i = 0; i < 1; i++) {
+    for (let i = 0; i < 1; i++) {
       let value = [];
       value.push(_this.metricDescriptor.metricConfig.datasets[i]);
       value.push(data.points[i]);
@@ -9429,18 +9438,18 @@ $(function() {
 
   function log(s) {
     if (typeof(console) != 'undefined') {
-      for(let i in arguments) {
+      for (let i in arguments) {
         // console.log(arguments[i]);
       }
     }
   }
 
   const renderers = {
-      Chart:    (document.location.search.indexOf('c3') === -1 ? ChartRenderer_ChartJS : ChartRenderer_C3)
-    , Progress: ProgressRenderer
-    , Table:    TableRenderer
-    , Value:    ValueRenderer
-    , Gauge:    GaugeRenderer
+    Chart: (document.location.search.indexOf('c3') === -1 ? ChartRenderer_ChartJS : ChartRenderer_C3),
+    Progress: ProgressRenderer,
+    Table: TableRenderer,
+    Value: ValueRenderer,
+    Gauge: GaugeRenderer
   };
 
   let widgets = [];
@@ -9456,7 +9465,9 @@ $(function() {
             return ((widget.metricDescriptor.metricInfo.metricUid === metricDescriptorCopy.metricInfo.metricUid) && (widget.metricDescriptor.metricInfo.metricRenderer === metricDescriptorCopy.metricInfo.metricRenderer));
           });
           if (existingWidgets.length === 0) {
-            let widget = new renderers[metricRenderer](widgetsContainer, metricDescriptorCopy, { theme: getTheme() });
+            let widget = new renderers[metricRenderer](widgetsContainer, metricDescriptorCopy, {
+              theme: getTheme()
+            });
             widgets.push(widget);
           }
         }
@@ -9497,35 +9508,37 @@ $(function() {
     }
   }
 
-  const dataServer = io.connect(backEndUrl, { reconnect: true });
+  const dataServer = io.connect(backEndUrl, {
+    reconnect: true
+  });
 
-  dataServer.on('connect', function () {
+  dataServer.on('connect', function() {
     log('connect');
     dataServer.emit('registerObserver');
   });
 
-  dataServer.on('hubOnline', function () {
+  dataServer.on('hubOnline', function() {
     log('online');
     indicateHubStatus(true);
   });
 
-  dataServer.on('hubOffline', function () {
+  dataServer.on('hubOffline', function() {
     log('offline');
     indicateHubStatus(false);
   });
 
-  dataServer.on('registerMetric', function (metricDescriptor) {
+  dataServer.on('registerMetric', function(metricDescriptor) {
     log('registerMetric', metricDescriptor);
     registerMetric(metricDescriptor);
     filter();
   });
 
-  dataServer.on('unregisterMetric', function (metricDescriptor) {
+  dataServer.on('unregisterMetric', function(metricDescriptor) {
     log('unregisterMetric', metricDescriptor);
     removeMetric(metricDescriptor.metricInfo.metricUid);
   });
 
-  dataServer.on('metricData', function (data) {
+  dataServer.on('metricData', function(data) {
     log(data);
     pushData(data.metricUid, data.metricData);
   });

@@ -12,7 +12,7 @@ class GaugeRenderer extends CustomRenderer {
 
     _this.widgetContainer.find('.widget-body').append(bodyTemplate());
 
-    let min = (this.metricDescriptor.metricConfig.suggestedMin ? this.metricDescriptor.metricConfig.suggestedMin : (this.metricDescriptor.metricConfig.min ? this.metricDescriptor.metricConfig.min :   0));
+    let min = (this.metricDescriptor.metricConfig.suggestedMin ? this.metricDescriptor.metricConfig.suggestedMin : (this.metricDescriptor.metricConfig.min ? this.metricDescriptor.metricConfig.min : 0));
     let max = (this.metricDescriptor.metricConfig.suggestedMax ? this.metricDescriptor.metricConfig.suggestedMax : (this.metricDescriptor.metricConfig.max ? this.metricDescriptor.metricConfig.max : 100));
 
     _this.control_Chart = _this.widgetContainer.find('.widget-body').find('.chart');
@@ -22,7 +22,7 @@ class GaugeRenderer extends CustomRenderer {
     _this.chart = c3.generate({
       bindto: _this.control_Chart[0],
       data: {
-        columns: [ ],
+        columns: [],
         type: 'gauge',
         labels: false,
       },
@@ -51,7 +51,7 @@ class GaugeRenderer extends CustomRenderer {
     const _this = this;
 
     if (_this.metricDescriptor.metricConfig.ranges) {
-      for(let i = _this.metricDescriptor.metricConfig.ranges.length-1; i >= 0; i--) {
+      for (let i = _this.metricDescriptor.metricConfig.ranges.length - 1; i >= 0; i--) {
         if (value >= _this.metricDescriptor.metricConfig.ranges[i].value) {
           return _this.metricDescriptor.metricConfig.ranges[i].lineColor;
         }
@@ -78,7 +78,7 @@ class GaugeRenderer extends CustomRenderer {
     let colors = {};
     let columns = [];
     // for(let i = 0; i < _this.metricDescriptor.metricConfig.datasets.length; i++) {
-    for(let i = 0; i < 1; i++) {
+    for (let i = 0; i < 1; i++) {
       let value = [];
       value.push(_this.metricDescriptor.metricConfig.datasets[i]);
       value.push(data.points[i]);

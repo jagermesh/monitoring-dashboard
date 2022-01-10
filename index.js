@@ -1,6 +1,6 @@
-const colors       = require('colors');
-const express      = require('express');
-const basicAuth    = require('basic-auth');
+const colors = require('colors');
+const express = require('express');
+const basicAuth = require('basic-auth');
 const socketServer = require('socket.io');
 const socketClient = require('socket.io-client');
 
@@ -11,7 +11,12 @@ class MonitoringDashboard {
   constructor(config) {
     const _this = this;
 
-    _this.dashboardConfig = Object.assign({ backEndPort: 8081, frontEndPort: 8083, backEndUrl: 'http://localhost:8081', hubUrl: 'http://localhost:8082' }, config);
+    _this.dashboardConfig = Object.assign({
+      backEndPort: 8081,
+      frontEndPort: 8083,
+      backEndUrl: 'http://localhost:8081',
+      hubUrl: 'http://localhost:8082'
+    }, config);
   }
 
   log(message, attributes, isError) {
@@ -30,8 +35,8 @@ class MonitoringDashboard {
   start() {
     const _this = this;
 
-    let observers = Object.create({ });
-    let metrics = Object.create({ });
+    let observers = Object.create({});
+    let metrics = Object.create({});
 
     // Backend
 
@@ -39,31 +44,49 @@ class MonitoringDashboard {
 
     _this.log(`Connecting to hub at ${_this.dashboardConfig.hubUrl}`);
 
-    const backEndServer = socketServer.listen(_this.dashboardConfig.backEndPort, { log: false });
-    const hubServer = socketClient.connect(_this.dashboardConfig.hubUrl, { reconnect: true });
+    const backEndServer = socketServer.listen(_this.dashboardConfig.backEndPort, {
+      log: false
+    });
+    const hubServer = socketClient.connect(_this.dashboardConfig.hubUrl, {
+      reconnect: true
+    });
 
-    backEndServer.on('connection', function (socket) {
+    backEndServer.on('connection', function(socket) {
       let connectionInfo = {
         id: socket.id,
         address: socket.handshake.address.replace('::1', '127.0.0.1').replace('::ffff:', ''),
       };
       _this.log('New connection', connectionInfo);
       socket.on('registerObserver', function(data) {
-        let observerInfo = Object.assign({ observerId: connectionInfo.id }, connectionInfo);
-        _this.log('New connection is observer', { observerId: observerInfo.id });
-        observers[connectionInfo.id] = { socket: socket, observerInfo: observerInfo };
-        socket.emit('observerRegistered', { observerInfo: observerInfo });
+        let observerInfo = Object.assign({
+          observerId: connectionInfo.id
+        }, connectionInfo);
+        _this.log('New connection is observer', {
+          observerId: observerInfo.id
+        });
+        observers[connectionInfo.id] = {
+          socket: socket,
+          observerInfo: observerInfo
+        };
+        socket.emit('observerRegistered', {
+          observerInfo: observerInfo
+        });
         if (hubServer.connected) {
           socket.emit('hubOnline');
         } else {
           socket.emit('hubOffline');
         }
-        _this.log('Observer registered', { observerId: observerInfo.id });
+        _this.log('Observer registered', {
+          observerId: observerInfo.id
+        });
         setTimeout(function() {
           _this.log('Sending metrics list to observers');
           for (let metricUid in metrics) {
             let metric = metrics[metricUid];
-            _this.log('Sending metric info to observer',  { observerId: observerInfo.observerId, metricUid: metric.metricDescriptor.metricInfo.metricUid });
+            _this.log('Sending metric info to observer', {
+              observerId: observerInfo.observerId,
+              metricUid: metric.metricDescriptor.metricInfo.metricUid
+            });
             socket.emit('registerMetric', metric.metricDescriptor);
           }
           setTimeout(function() {
@@ -71,7 +94,10 @@ class MonitoringDashboard {
             for (let metricUid in metrics) {
               let metric = metrics[metricUid];
               if (metric.metricData) {
-                _this.log('Sending metric data to observer',  { observerId: observerInfo.observerId, metricUid: metric.metricDescriptor.metricInfo.metricUid });
+                _this.log('Sending metric data to observer', {
+                  observerId: observerInfo.observerId,
+                  metricUid: metric.metricDescriptor.metricInfo.metricUid
+                });
                 socket.emit('metricData', metric.metricData);
               }
             }
@@ -82,7 +108,9 @@ class MonitoringDashboard {
         let observer = observers[connectionInfo.id];
         delete observers[connectionInfo.id];
         if (observer) {
-          _this.log('Observer disconnected', { observerId: observer.observerInfo.observerId });
+          _this.log('Observer disconnected', {
+            observerId: observer.observerInfo.observerId
+          });
         }
       });
     });
@@ -94,7 +122,7 @@ class MonitoringDashboard {
     _this.log('Starting dashboard server');
 
     if (_this.dashboardConfig.httpAuth) {
-      app.get('/', function (req, res, next) {
+      app.get('/', function(req, res, next) {
         const user = basicAuth(req);
         if (!user || !user.name || !user.pass) {
           res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
@@ -115,7 +143,7 @@ class MonitoringDashboard {
       next();
     });
 
-    app.get('/js/config.js', function(req, res){
+    app.get('/js/config.js', function(req, res) {
       const body = `
         function MonitoringSensorConfig() {
           return { backendUrl: "${_this.dashboardConfig.backEndUrl}" };
@@ -134,28 +162,32 @@ class MonitoringDashboard {
 
     // Hub
 
-    hubServer.on('connect', function () {
+    hubServer.on('connect', function() {
       _this.log(`Connected to hub`);
       _this.log('Registering as observer');
       hubServer.emit('registerObserver');
     });
 
-    hubServer.on('observerRegistered', function () {
+    hubServer.on('observerRegistered', function() {
       _this.log('Observer registration acknowledged');
-      for(let observerId in observers) {
+      for (let observerId in observers) {
         observers[observerId].socket.emit('hubOnline');
       }
     });
 
-    hubServer.on('registerMetric', function (metricDescriptor) {
-      _this.log('Metric registered', { metricUid: metricDescriptor.metricInfo.metricUid });
-      metrics[metricDescriptor.metricInfo.metricUid] = { metricDescriptor: metricDescriptor };
-      for(let observerId in observers) {
+    hubServer.on('registerMetric', function(metricDescriptor) {
+      _this.log('Metric registered', {
+        metricUid: metricDescriptor.metricInfo.metricUid
+      });
+      metrics[metricDescriptor.metricInfo.metricUid] = {
+        metricDescriptor: metricDescriptor
+      };
+      for (let observerId in observers) {
         observers[observerId].socket.emit('registerMetric', metricDescriptor);
       }
     });
 
-    hubServer.on('metricData', function (data) {
+    hubServer.on('metricData', function(data) {
       let metric = metrics[data.metricUid];
       if (metric) {
         metric.metricData = data.metricData;
@@ -165,15 +197,22 @@ class MonitoringDashboard {
       }
     });
 
-    hubServer.on('unregisterMetric', function (metricDescriptor) {
+    hubServer.on('unregisterMetric', function(metricDescriptor) {
       let metric = metrics[metricDescriptor.metricInfo.metricUid];
       delete metrics[metricDescriptor.metricInfo.metricUid];
       if (metric) {
-        _this.log('Metric disconnected', { metricUid: metric.metricDescriptor.metricInfo.metricUid });
-        _this.log('Informing observers about metric disconnection',  { metricUid: metric.metricDescriptor.metricInfo.metricUid });
-        for(let observerId in observers) {
+        _this.log('Metric disconnected', {
+          metricUid: metric.metricDescriptor.metricInfo.metricUid
+        });
+        _this.log('Informing observers about metric disconnection', {
+          metricUid: metric.metricDescriptor.metricInfo.metricUid
+        });
+        for (let observerId in observers) {
           let observer = observers[observerId];
-          _this.log('Informing observer about metric disconnection',  { observerId: observer.observerInfo.observerId, metricUid: metric.metricDescriptor.metricInfo.metricUid });
+          _this.log('Informing observer about metric disconnection', {
+            observerId: observer.observerInfo.observerId,
+            metricUid: metric.metricDescriptor.metricInfo.metricUid
+          });
           observer.socket.emit('unregisterMetric', metricDescriptor);
         }
       }
@@ -181,12 +220,15 @@ class MonitoringDashboard {
     hubServer.on('disconnect', function(data) {
       _this.log('Disconnected from hub');
       _this.log('Informing observers about metric disconnection');
-      for(let observerId in observers) {
+      for (let observerId in observers) {
         let observer = observers[observerId];
-        for(let metricUid in metrics) {
+        for (let metricUid in metrics) {
           let metric = metrics[metricUid];
           delete metrics[metricUid];
-          _this.log('Informing observer about metric disconnection',  { observerId: observer.observerInfo.observerId, metricUid: metric.metricDescriptor.metricInfo.metricUid });
+          _this.log('Informing observer about metric disconnection', {
+            observerId: observer.observerInfo.observerId,
+            metricUid: metric.metricDescriptor.metricInfo.metricUid
+          });
           observer.socket.emit('unregisterMetric', metric.metricDescriptor);
         }
         observer.socket.emit('hubOffline');

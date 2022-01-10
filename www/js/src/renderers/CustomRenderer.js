@@ -1,8 +1,8 @@
 class CustomRenderer {
 
   constructor(container, metricDescriptor, settings) {
-    this.metricDescriptor = Object.assign({ }, metricDescriptor);
-    this.settings = Object.assign({ }, settings);
+    this.metricDescriptor = Object.assign({}, metricDescriptor);
+    this.settings = Object.assign({}, settings);
 
     const widgetTemplate = Handlebars.compile(`
       <div class="widget card mb-3 mr-3" data-ip="{{sensorInfo.sensorLocation}}" data-uid="{{metricInfo.metricUid}}" data-metric-name="{{metricInfo.metricName}}" data-renderer-name="{{metricInfo.metricRenderer}}">
@@ -66,11 +66,11 @@ class CustomRenderer {
 
   requestAnimationFrame(callback, element) {
     let requestAnimationFrame =
-      window.requestAnimationFrame        ||
-      window.webkitRequestAnimationFrame  ||
-      window.mozRequestAnimationFrame     ||
-      window.oRequestAnimationFrame       ||
-      window.msRequestAnimationFrame      ||
+      window.requestAnimationFrame ||
+      window.webkitRequestAnimationFrame ||
+      window.mozRequestAnimationFrame ||
+      window.oRequestAnimationFrame ||
+      window.msRequestAnimationFrame ||
       function(callback, element) {
         let currTime = new Date().getTime();
         let timeToCall = Math.max(0, 16 - (currTime - lastAnimationFramtTime));

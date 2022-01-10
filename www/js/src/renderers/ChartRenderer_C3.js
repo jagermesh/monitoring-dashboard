@@ -12,7 +12,7 @@ class ChartRenderer_C3 extends CustomRenderer {
 
     _this.widgetContainer.find('.widget-body').append(bodyTemplate());
 
-    let min = (this.metricDescriptor.metricConfig.suggestedMin ? this.metricDescriptor.metricConfig.suggestedMin : (this.metricDescriptor.metricConfig.min ? this.metricDescriptor.metricConfig.min :   0));
+    let min = (this.metricDescriptor.metricConfig.suggestedMin ? this.metricDescriptor.metricConfig.suggestedMin : (this.metricDescriptor.metricConfig.min ? this.metricDescriptor.metricConfig.min : 0));
     let max = (this.metricDescriptor.metricConfig.suggestedMax ? this.metricDescriptor.metricConfig.suggestedMax : (this.metricDescriptor.metricConfig.max ? this.metricDescriptor.metricConfig.max : 100));
 
     _this.control_Chart = _this.widgetContainer.find('.widget-body').find('.chart');
@@ -37,7 +37,7 @@ class ChartRenderer_C3 extends CustomRenderer {
         x: 'timestamp',
         xFormat: '%Y-%m-%d %H:%M:%S',
         columns: [
-            // ['timestamp', moment().format('YYYY-MM-DD HH:mm:ss')],
+          // ['timestamp', moment().format('YYYY-MM-DD HH:mm:ss')],
         ],
         labels: false,
         types: dataTypes,
@@ -89,14 +89,14 @@ class ChartRenderer_C3 extends CustomRenderer {
     const _this = this;
 
     if (_this.metricDescriptor.metricConfig.ranges) {
-      for(let i = _this.metricDescriptor.metricConfig.ranges.length-1; i >= 0; i--) {
+      for (let i = _this.metricDescriptor.metricConfig.ranges.length - 1; i >= 0; i--) {
         if (value >= _this.metricDescriptor.metricConfig.ranges[i].value) {
           return _this.metricDescriptor.metricConfig.ranges[i].lineColor;
         }
       }
     }
 
-    return (index === 0 ? _this.metricDescriptor.metricConfig.lineColor : _this.getAvaialbleColor(index-1));
+    return (index === 0 ? _this.metricDescriptor.metricConfig.lineColor : _this.getAvaialbleColor(index - 1));
   }
 
   draw(columns, colors) {
@@ -116,7 +116,10 @@ class ChartRenderer_C3 extends CustomRenderer {
     while (_this.statData.length > _this.maxPeriod) {
       _this.statData = _this.statData.slice(1);
     }
-    _this.statData.push({ x: moment().format('YYYY-MM-DD HH:mm:ss'), values: data.points });
+    _this.statData.push({
+      x: moment().format('YYYY-MM-DD HH:mm:ss'),
+      values: data.points
+    });
 
     // let colors = {};
     let columns = [];

@@ -13,18 +13,18 @@ $(function() {
 
   function log(s) {
     if (typeof(console) != 'undefined') {
-      for(let i in arguments) {
+      for (let i in arguments) {
         // console.log(arguments[i]);
       }
     }
   }
 
   const renderers = {
-      Chart:    (document.location.search.indexOf('c3') === -1 ? ChartRenderer_ChartJS : ChartRenderer_C3)
-    , Progress: ProgressRenderer
-    , Table:    TableRenderer
-    , Value:    ValueRenderer
-    , Gauge:    GaugeRenderer
+    Chart: (document.location.search.indexOf('c3') === -1 ? ChartRenderer_ChartJS : ChartRenderer_C3),
+    Progress: ProgressRenderer,
+    Table: TableRenderer,
+    Value: ValueRenderer,
+    Gauge: GaugeRenderer
   };
 
   let widgets = [];
@@ -40,7 +40,9 @@ $(function() {
             return ((widget.metricDescriptor.metricInfo.metricUid === metricDescriptorCopy.metricInfo.metricUid) && (widget.metricDescriptor.metricInfo.metricRenderer === metricDescriptorCopy.metricInfo.metricRenderer));
           });
           if (existingWidgets.length === 0) {
-            let widget = new renderers[metricRenderer](widgetsContainer, metricDescriptorCopy, { theme: getTheme() });
+            let widget = new renderers[metricRenderer](widgetsContainer, metricDescriptorCopy, {
+              theme: getTheme()
+            });
             widgets.push(widget);
           }
         }
@@ -81,35 +83,37 @@ $(function() {
     }
   }
 
-  const dataServer = io.connect(backEndUrl, { reconnect: true });
+  const dataServer = io.connect(backEndUrl, {
+    reconnect: true
+  });
 
-  dataServer.on('connect', function () {
+  dataServer.on('connect', function() {
     log('connect');
     dataServer.emit('registerObserver');
   });
 
-  dataServer.on('hubOnline', function () {
+  dataServer.on('hubOnline', function() {
     log('online');
     indicateHubStatus(true);
   });
 
-  dataServer.on('hubOffline', function () {
+  dataServer.on('hubOffline', function() {
     log('offline');
     indicateHubStatus(false);
   });
 
-  dataServer.on('registerMetric', function (metricDescriptor) {
+  dataServer.on('registerMetric', function(metricDescriptor) {
     log('registerMetric', metricDescriptor);
     registerMetric(metricDescriptor);
     filter();
   });
 
-  dataServer.on('unregisterMetric', function (metricDescriptor) {
+  dataServer.on('unregisterMetric', function(metricDescriptor) {
     log('unregisterMetric', metricDescriptor);
     removeMetric(metricDescriptor.metricInfo.metricUid);
   });
 
-  dataServer.on('metricData', function (data) {
+  dataServer.on('metricData', function(data) {
     log(data);
     pushData(data.metricUid, data.metricData);
   });

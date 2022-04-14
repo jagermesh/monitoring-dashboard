@@ -1,5 +1,6 @@
-class TableRenderer extends CustomRenderer {
+/* global CustomRenderer */
 
+class TableRenderer extends CustomRenderer {
   constructor(container, metricDescriptor, settings) {
     super(container, metricDescriptor, settings);
 
@@ -54,5 +55,6 @@ class TableRenderer extends CustomRenderer {
       }
     }
   }
-
 }
+
+if (typeof module !== 'undefined' && module.exports) module.exports = TableRenderer; else window.TableRenderer = TableRenderer;

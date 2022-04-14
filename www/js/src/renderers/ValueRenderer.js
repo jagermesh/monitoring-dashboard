@@ -1,5 +1,6 @@
-class ValueRenderer extends CustomRenderer {
+/* global CustomRenderer */
 
+class ValueRenderer extends CustomRenderer {
   constructor(container, metricDescriptor, settings) {
     super(container, metricDescriptor, settings);
 
@@ -16,7 +17,6 @@ class ValueRenderer extends CustomRenderer {
     _this.widgetContainer.find('.widget-body').append(bodyTemplate());
 
     _this.control_Content = _this.control_Body.find('.content');
-
   }
 
   pushData(data) {
@@ -51,5 +51,6 @@ class ValueRenderer extends CustomRenderer {
 
     _this.control_Content.html(texts);
   }
-
 }
+
+if (typeof module !== 'undefined' && module.exports) module.exports = ValueRenderer; else window.ValueRenderer = ValueRenderer;

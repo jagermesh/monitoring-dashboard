@@ -1,5 +1,8 @@
-class ChartRenderer_C3 extends CustomRenderer {
+/* global CustomRenderer */
+/* global c3 */
+/* global moment */
 
+class ChartRenderer_C3 extends CustomRenderer {
   constructor(container, metricDescriptor, settings) {
     super(container, metricDescriptor, settings);
 
@@ -11,9 +14,6 @@ class ChartRenderer_C3 extends CustomRenderer {
     `);
 
     _this.widgetContainer.find('.widget-body').append(bodyTemplate());
-
-    let min = (this.metricDescriptor.metricConfig.suggestedMin ? this.metricDescriptor.metricConfig.suggestedMin : (this.metricDescriptor.metricConfig.min ? this.metricDescriptor.metricConfig.min : 0));
-    let max = (this.metricDescriptor.metricConfig.suggestedMax ? this.metricDescriptor.metricConfig.suggestedMax : (this.metricDescriptor.metricConfig.max ? this.metricDescriptor.metricConfig.max : 100));
 
     _this.control_Chart = _this.widgetContainer.find('.widget-body').find('.chart');
 
@@ -69,7 +69,6 @@ class ChartRenderer_C3 extends CustomRenderer {
         }
       }
     });
-
   }
 
   getAvaialbleColor(index) {
@@ -146,5 +145,6 @@ class ChartRenderer_C3 extends CustomRenderer {
       _this.draw(columns, colors);
     });
   }
-
 }
+
+if (typeof module !== 'undefined' && module.exports) module.exports = ChartRenderer_C3; else window.ChartRenderer_C3 = ChartRenderer_C3;

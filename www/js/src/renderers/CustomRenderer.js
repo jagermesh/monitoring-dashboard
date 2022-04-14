@@ -1,8 +1,8 @@
 class CustomRenderer {
-
   constructor(container, metricDescriptor, settings) {
     this.metricDescriptor = Object.assign({}, metricDescriptor);
     this.settings = Object.assign({}, settings);
+    this.lastAnimationFramtTime = 0;
 
     const widgetTemplate = Handlebars.compile(`
       <div class="widget card mb-3 mr-3" data-ip="{{sensorInfo.sensorLocation}}" data-uid="{{metricInfo.metricUid}}" data-metric-name="{{metricInfo.metricName}}" data-renderer-name="{{metricInfo.metricRenderer}}">
@@ -40,7 +40,6 @@ class CustomRenderer {
     this.control_Body = this.widgetContainer.find('.widget-body');
     this.control_Footer_Title = this.widgetContainer.find('.widget-footer-title');
     this.control_Footer_SubTitle = this.widgetContainer.find('.widget-footer-sub-title');
-
   }
 
   pushData(data) {
@@ -60,24 +59,26 @@ class CustomRenderer {
     }
   }
 
-  setTheme(name) {
+  setTheme() {
 
   }
 
   requestAnimationFrame(callback, element) {
+    const _this = this;
+
     let requestAnimationFrame =
       window.requestAnimationFrame ||
       window.webkitRequestAnimationFrame ||
       window.mozRequestAnimationFrame ||
       window.oRequestAnimationFrame ||
       window.msRequestAnimationFrame ||
-      function(callback, element) {
+      function(callback) {
         let currTime = new Date().getTime();
-        let timeToCall = Math.max(0, 16 - (currTime - lastAnimationFramtTime));
+        let timeToCall = Math.max(0, 16 - (currTime - _this.lastAnimationFramtTime));
         let id = window.setTimeout(function() {
           callback(currTime + timeToCall);
         }, timeToCall);
-        lastAnimationFramtTime = currTime + timeToCall;
+        _this.lastAnimationFramtTime = currTime + timeToCall;
         return id;
       };
 
@@ -87,5 +88,6 @@ class CustomRenderer {
   remove() {
     this.widgetContainer.remove();
   }
-
 }
+
+if (typeof module !== 'undefined' && module.exports) module.exports = CustomRenderer; else window.CustomRenderer = CustomRenderer;

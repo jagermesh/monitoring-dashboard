@@ -7,7 +7,6 @@ const socketClient = require('socket.io-client');
 const app = express();
 
 class MonitoringDashboard {
-
   constructor(config) {
     const _this = this;
 
@@ -57,7 +56,7 @@ class MonitoringDashboard {
         address: socket.handshake.address.replace('::1', '127.0.0.1').replace('::ffff:', ''),
       };
       _this.log('New connection', connectionInfo);
-      socket.on('registerObserver', function(data) {
+      socket.on('registerObserver', function() {
         let observerInfo = Object.assign({
           observerId: connectionInfo.id
         }, connectionInfo);
@@ -154,7 +153,7 @@ class MonitoringDashboard {
       res.end(body);
     });
 
-    app.use(express.static(__dirname + '/www'));
+    app.use(express.static(`${__dirname}/www`));
 
     app.listen(_this.dashboardConfig.frontEndPort);
 
@@ -217,7 +216,8 @@ class MonitoringDashboard {
         }
       }
     });
-    hubServer.on('disconnect', function(data) {
+
+    hubServer.on('disconnect', function() {
       _this.log('Disconnected from hub');
       _this.log('Informing observers about metric disconnection');
       for (let observerId in observers) {
@@ -235,7 +235,6 @@ class MonitoringDashboard {
       }
     });
   }
-
 }
 
 module.exports = MonitoringDashboard;

@@ -1,5 +1,6 @@
-class ProgressRenderer extends CustomRenderer {
+/* global CustomRenderer */
 
+class ProgressRenderer extends CustomRenderer {
   constructor(container, metricDescriptor, settings) {
     super(container, metricDescriptor, settings);
 
@@ -49,5 +50,6 @@ class ProgressRenderer extends CustomRenderer {
     });
     _this.control_TableBody.html(text);
   }
-
 }
+
+if (typeof module !== 'undefined' && module.exports) module.exports = ProgressRenderer; else window.ProgressRenderer = ProgressRenderer;

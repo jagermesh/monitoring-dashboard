@@ -1,4 +1,11 @@
 /* global MonitoringSensorConfig */
+/* global ChartRenderer_ChartJS */
+/* global ChartRenderer_C3 */
+/* global ProgressRenderer */
+/* global TableRenderer */
+/* global ValueRenderer */
+/* global GaugeRenderer */
+/* global io */
 
 $(function() {
   let config = MonitoringSensorConfig();
@@ -11,7 +18,7 @@ $(function() {
 
   let widgetsContainer = $('div.widgets-container');
 
-  function log(s) {
+  function log() {
     if (typeof(console) != 'undefined') {
       for (let i in arguments) {
         // console.log(arguments[i]);
@@ -185,5 +192,4 @@ $(function() {
     $('.widget-detached').removeClass('widget-detached');
     $('body').removeClass('widget-detached-activated');
   });
-
 });

@@ -1,5 +1,7 @@
-class GaugeRenderer extends CustomRenderer {
+/* global CustomRenderer */
+/* global c3 */
 
+class GaugeRenderer extends CustomRenderer {
   constructor(container, metricDescriptor, settings) {
     super(container, metricDescriptor, settings);
 
@@ -44,7 +46,6 @@ class GaugeRenderer extends CustomRenderer {
         show: false
       }
     });
-
   }
 
   getColor(index, value) {
@@ -77,7 +78,6 @@ class GaugeRenderer extends CustomRenderer {
 
     let colors = {};
     let columns = [];
-    // for(let i = 0; i < _this.metricDescriptor.metricConfig.datasets.length; i++) {
     for (let i = 0; i < 1; i++) {
       let value = [];
       value.push(_this.metricDescriptor.metricConfig.datasets[i]);
@@ -91,5 +91,6 @@ class GaugeRenderer extends CustomRenderer {
       });
     }
   }
-
 }
+
+if (typeof module !== 'undefined' && module.exports) module.exports = GaugeRenderer; else window.GaugeRenderer = GaugeRenderer;

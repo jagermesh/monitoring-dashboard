@@ -1,13 +1,16 @@
 const gulp = require('gulp');
 const concat = require('gulp-concat');
-const jshint = require('gulp-jshint');
+const eslint = require('gulp-eslint');
 const terser = require('gulp-terser');
 const rename = require('gulp-rename');
 const merge = require('merge-stream');
 
-const config = {
-  jshint: {
-    src: ['*.js', '!node_modules/**/*.js']
+const configs = {
+  eslint: {
+    src: [
+      '*.js',
+      'www/**/*.js',
+    ]
   },
   concat: [{
     src: [
@@ -31,7 +34,7 @@ const config = {
 };
 
 gulp.task('concat', function() {
-  const tasks = config.concat.map(function(task) {
+  const tasks = configs.concat.map(function(task) {
     return gulp.src(task.src)
       .pipe(concat(task.name, {
         newLine: '\r\n'
@@ -42,7 +45,7 @@ gulp.task('concat', function() {
 });
 
 gulp.task('terser', function() {
-  const tasks = config.terser.map(function(task) {
+  const tasks = configs.terser.map(function(task) {
     return gulp.src(task.src)
       .pipe(terser())
       .pipe(rename({
@@ -53,11 +56,11 @@ gulp.task('terser', function() {
   return merge(tasks);
 });
 
-gulp.task('jshint', function() {
-  return gulp.src(config.jshint.src)
-    .pipe(jshint())
-    .pipe(jshint.reporter('default'))
-    .pipe(jshint.reporter('fail'));
+gulp.task('eslint', function() {
+  return gulp.src(configs.eslint.src)
+    .pipe(eslint({quiet: true}))
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError());
 });
 
-gulp.task('build', gulp.series('jshint', 'concat', 'terser'));
+gulp.task('build', gulp.series('eslint', 'concat', 'terser'));

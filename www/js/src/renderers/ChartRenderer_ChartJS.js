@@ -1,5 +1,8 @@
-class ChartRenderer_ChartJS extends CustomRenderer {
+/* global CustomRenderer */
+/* global RGBColor */
+/* global Chart */
 
+class ChartRenderer_ChartJS extends CustomRenderer {
   constructor(container, metricDescriptor, settings) {
     super(container, metricDescriptor, settings);
 
@@ -123,7 +126,6 @@ class ChartRenderer_ChartJS extends CustomRenderer {
         }
       }
     });
-
   }
 
   getLabels() {
@@ -218,5 +220,6 @@ class ChartRenderer_ChartJS extends CustomRenderer {
     _this.chart.options.scales.yAxes[0].gridLines.color = _this.getGridLinesColor();
     _this.chart.update();
   }
-
 }
+
+if (typeof module !== 'undefined' && module.exports) module.exports = ChartRenderer_ChartJS; else window.ChartRenderer_ChartJS = ChartRenderer_ChartJS;

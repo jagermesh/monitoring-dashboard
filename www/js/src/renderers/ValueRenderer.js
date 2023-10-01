@@ -4,8 +4,6 @@ class ValueRenderer extends CustomRenderer {
   constructor(container, metricDescriptor, settings) {
     super(container, metricDescriptor, settings);
 
-    const _this = this;
-
     const bodyTemplate = Handlebars.compile(`
       <div class="content" style="text-align:center;">
         <div class="value1" style="font-size:64px;"></div>
@@ -14,20 +12,18 @@ class ValueRenderer extends CustomRenderer {
       </div>
     `);
 
-    _this.widgetContainer.find('.widget-body').append(bodyTemplate());
+    this.widgetContainer.find('.widget-body').append(bodyTemplate());
 
-    _this.control_Content = _this.control_Body.find('.content');
+    this.control_Content = this.control_Body.find('.content');
   }
 
   pushData(data) {
     super.pushData(data);
 
-    const _this = this;
-
     let texts = '';
 
     if (data.values) {
-      data.values.map(function(value) {
+      data.values.map((value) => {
         let cell = value.formatted ? value.formatted : value.raw;
         let dom = $(`<div>${cell}</div>`);
         dom.find('script,iframe,style').remove();
@@ -36,10 +32,10 @@ class ValueRenderer extends CustomRenderer {
         if (value.label) {
           text = `<span style="font-size: 14px">${value.label}</span>${text}`;
         }
-        if (value.threshold && _this.metricDescriptor.metricConfig.ranges) {
-          for (let i = _this.metricDescriptor.metricConfig.ranges.length - 1; i >= 0; i--) {
-            if (value.threshold >= _this.metricDescriptor.metricConfig.ranges[i].value) {
-              text = `<div style="color:${_this.metricDescriptor.metricConfig.ranges[i].lineColor}">${text}</div>`;
+        if (value.threshold && this.metricDescriptor.metricConfig.ranges) {
+          for (let i = this.metricDescriptor.metricConfig.ranges.length - 1; i >= 0; i--) {
+            if (value.threshold >= this.metricDescriptor.metricConfig.ranges[i].value) {
+              text = `<div style="color:${this.metricDescriptor.metricConfig.ranges[i].lineColor}">${text}</div>`;
               break;
             }
           }
@@ -49,8 +45,12 @@ class ValueRenderer extends CustomRenderer {
       });
     }
 
-    _this.control_Content.html(texts);
+    this.control_Content.html(texts);
   }
 }
 
-if (typeof module !== 'undefined' && module.exports) module.exports = ValueRenderer; else window.ValueRenderer = ValueRenderer;
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = ValueRenderer;
+} else {
+  window.ValueRenderer = ValueRenderer;
+}

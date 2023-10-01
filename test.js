@@ -6,7 +6,7 @@ const config = {
     frontEndPort: 8083,
     backEndUrl: 'http://localhost:8081',
     hubUrl: 'http://localhost:8082',
-  }
+  },
 };
 
 const dashboard = new MonitoringDashboard(config.dashboard);

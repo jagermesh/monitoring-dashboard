@@ -7,7 +7,7 @@
 /* global GaugeRenderer */
 /* global io */
 
-$(function() {
+$(() => {
   let config = MonitoringSensorConfig();
 
   function getTheme() {
@@ -19,9 +19,9 @@ $(function() {
   let widgetsContainer = $('div.widgets-container');
 
   function log() {
-    if (typeof(console) != 'undefined') {
+    if (typeof (console) != 'undefined') {
       for (let i in arguments) {
-        // console.log(arguments[i]);
+        console.log(arguments[i]);
       }
     }
   }
@@ -31,7 +31,7 @@ $(function() {
     Progress: ProgressRenderer,
     Table: TableRenderer,
     Value: ValueRenderer,
-    Gauge: GaugeRenderer
+    Gauge: GaugeRenderer,
   };
 
   let widgets = [];
@@ -39,16 +39,19 @@ $(function() {
   function registerMetric(metricDescriptor) {
     if (metricDescriptor.metricInfo.metricRenderer) {
       const metricRenderers = metricDescriptor.metricInfo.metricRenderer.split(',');
-      metricRenderers.map(function(metricRenderer) {
+      metricRenderers.map((metricRenderer) => {
         if (renderers[metricRenderer]) {
           const metricDescriptorCopy = JSON.parse(JSON.stringify(metricDescriptor));
           metricDescriptorCopy.metricInfo.metricRenderer = metricRenderer;
-          let existingWidgets = widgets.filter(function(widget) {
-            return ((widget.metricDescriptor.metricInfo.metricUid === metricDescriptorCopy.metricInfo.metricUid) && (widget.metricDescriptor.metricInfo.metricRenderer === metricDescriptorCopy.metricInfo.metricRenderer));
+          let existingWidgets = widgets.filter((widget) => {
+            return (
+              (widget.metricDescriptor.metricInfo.metricUid === metricDescriptorCopy.metricInfo.metricUid) &&
+              (widget.metricDescriptor.metricInfo.metricRenderer === metricDescriptorCopy.metricInfo.metricRenderer)
+            );
           });
           if (existingWidgets.length === 0) {
             let widget = new renderers[metricRenderer](widgetsContainer, metricDescriptorCopy, {
-              theme: getTheme()
+              theme: getTheme(),
             });
             widgets.push(widget);
           }
@@ -58,7 +61,7 @@ $(function() {
   }
 
   function pushData(metricUid, metricData) {
-    widgets.map(function(widget) {
+    widgets.map((widget) => {
       if (widget.metricDescriptor.metricInfo.metricUid == metricUid) {
         widget.pushData(metricData);
       }
@@ -66,7 +69,7 @@ $(function() {
   }
 
   function removeMetric(metricUid) {
-    widgets = widgets.filter(function(widget) {
+    widgets = widgets.filter((widget) => {
       if (widget.metricDescriptor.metricInfo.metricUid == metricUid) {
         widget.remove();
         return false;
@@ -76,7 +79,7 @@ $(function() {
   }
 
   function removeAllMetrics() {
-    widgets = widgets.filter(function(widget) {
+    widgets = widgets.filter((widget) => {
       widget.remove();
       return false;
     });
@@ -91,41 +94,41 @@ $(function() {
   }
 
   const dataServer = io.connect(backEndUrl, {
-    reconnect: true
+    reconnect: true,
   });
 
-  dataServer.on('connect', function() {
+  dataServer.on('connect', () => {
     log('connect');
     dataServer.emit('registerObserver');
   });
 
-  dataServer.on('hubOnline', function() {
+  dataServer.on('hubOnline', () => {
     log('online');
     indicateHubStatus(true);
   });
 
-  dataServer.on('hubOffline', function() {
+  dataServer.on('hubOffline', () => {
     log('offline');
     indicateHubStatus(false);
   });
 
-  dataServer.on('registerMetric', function(metricDescriptor) {
+  dataServer.on('registerMetric', (metricDescriptor) => {
     log('registerMetric', metricDescriptor);
     registerMetric(metricDescriptor);
     filter();
   });
 
-  dataServer.on('unregisterMetric', function(metricDescriptor) {
+  dataServer.on('unregisterMetric', (metricDescriptor) => {
     log('unregisterMetric', metricDescriptor);
     removeMetric(metricDescriptor.metricInfo.metricUid);
   });
 
-  dataServer.on('metricData', function(data) {
+  dataServer.on('metricData', (data) => {
     log(data);
     pushData(data.metricUid, data.metricData);
   });
 
-  dataServer.on('disconnect', function() {
+  dataServer.on('disconnect', () => {
     log('disconnect');
     indicateHubStatus(false);
     removeAllMetrics();
@@ -149,18 +152,18 @@ $(function() {
     });
   }
 
-  $('.action-clear-search').on('click', function() {
+  $('.action-clear-search').on('click', () => {
     $('.action-search').val('');
     filter();
   });
 
-  $('.action-filter-by-renderer-name').on('click', function() {
-    window.setTimeout(function() {
+  $('.action-filter-by-renderer-name').on('click', () => {
+    window.setTimeout(() => {
       filter();
     });
   });
 
-  $('.action-search').on('keyup', function() {
+  $('.action-search').on('keyup', () => {
     filter();
   });
 
@@ -168,7 +171,7 @@ $(function() {
     $('.action-switch-theme').removeClass('active');
     $(this).addClass('active');
     $('body').attr('data-theme', $(this).attr('data-theme'));
-    widgets.map(function(widget) {
+    widgets.map((widget) => {
       widget.setTheme(getTheme());
     });
   });

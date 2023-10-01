@@ -4,8 +4,6 @@ class ProgressRenderer extends CustomRenderer {
   constructor(container, metricDescriptor, settings) {
     super(container, metricDescriptor, settings);
 
-    const _this = this;
-
     const bodyTemplate = Handlebars.compile(`
       <table style="width:100%;">
         <tbody>
@@ -29,27 +27,30 @@ class ProgressRenderer extends CustomRenderer {
       </tr>
     `);
 
-    _this.control_TableBody = _this.widgetContainer.find('.widget-body').find('tbody');
+    this.control_TableBody = this.widgetContainer.find('.widget-body').find('tbody');
   }
 
   pushData(data) {
+    console.log(data);
     super.pushData(data);
-
-    const _this = this;
 
     let operations = data.operations;
     let text = '';
-    operations.map(function(operation) {
+    operations.map((operation) => {
       if (operation.total > 0) {
         operation.percent = (operation.current / operation.total * 100).toFixed(2);
       } else {
         operation.percent = 100;
       }
       operation.isFinished = (operation.current == operation.total);
-      text += _this.operationTemplate(operation);
+      text += this.operationTemplate(operation);
     });
-    _this.control_TableBody.html(text);
+    this.control_TableBody.html(text);
   }
 }
 
-if (typeof module !== 'undefined' && module.exports) module.exports = ProgressRenderer; else window.ProgressRenderer = ProgressRenderer;
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = ProgressRenderer;
+} else {
+  window.ProgressRenderer = ProgressRenderer;
+}

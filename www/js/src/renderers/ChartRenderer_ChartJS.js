@@ -6,42 +6,40 @@ class ChartRenderer_ChartJS extends CustomRenderer {
   constructor(container, metricDescriptor, settings) {
     super(container, metricDescriptor, settings);
 
-    const _this = this;
-
     const bodyTemplate = Handlebars.compile(`
       <div class="chart">
         <canvas style="width:350px;height:280px;"></canvas>
       </div>
     `);
 
-    _this.widgetContainer.find('.widget-body').append(bodyTemplate());
+    this.widgetContainer.find('.widget-body').append(bodyTemplate());
 
-    _this.control_Chart = _this.widgetContainer.find('.widget-body').find('.chart');
-    _this.control_Context = _this.control_Chart.find('canvas')[0].getContext('2d');
+    this.control_Chart = this.widgetContainer.find('.widget-body').find('.chart');
+    this.control_Context = this.control_Chart.find('canvas')[0].getContext('2d');
 
-    _this.maxPeriod = 30;
+    this.maxPeriod = 30;
 
-    _this.statData = [];
+    this.statData = [];
 
     const colors = ['aqua', 'burlywood', 'deepskyblue', 'mediumslateblue', 'beige', 'honeydew', 'honeydew', 'paleturquoise'];
     let usedColors = 0;
 
-    _this.metricDescriptor.metricConfig.datasets = _this.metricDescriptor.metricConfig.datasets || [];
+    this.metricDescriptor.metricConfig.datasets = this.metricDescriptor.metricConfig.datasets || [];
 
-    const isMultipleDataSets = (_this.metricDescriptor.metricConfig.datasets.length > 1);
+    const isMultipleDataSets = (this.metricDescriptor.metricConfig.datasets.length > 1);
     const opacity = 0.3;
 
-    if (_this.metricDescriptor.metricConfig.lineColor) {
-      let color = new RGBColor(_this.metricDescriptor.metricConfig.lineColor);
-      _this.metricDescriptor.metricConfig.fillColor = `rgb(${color.r},${color.g},${color.b},${opacity})`;
+    if (this.metricDescriptor.metricConfig.lineColor) {
+      let color = new RGBColor(this.metricDescriptor.metricConfig.lineColor);
+      this.metricDescriptor.metricConfig.fillColor = `rgb(${color.r},${color.g},${color.b},${opacity})`;
     } else {
       let color = randomColor();
-      _this.metricDescriptor.metricConfig.lineColor = color.lineColor;
-      _this.metricDescriptor.metricConfig.fillColor = color.fillColor;
+      this.metricDescriptor.metricConfig.lineColor = color.lineColor;
+      this.metricDescriptor.metricConfig.fillColor = color.fillColor;
     }
 
-    if (_this.metricDescriptor.metricConfig.ranges) {
-      _this.metricDescriptor.metricConfig.ranges.map(function(range) {
+    if (this.metricDescriptor.metricConfig.ranges) {
+      this.metricDescriptor.metricConfig.ranges.map((range) => {
         let color = new RGBColor(range.lineColor);
         range.fillColor = `rgb(${color.r},${color.g},${color.b},${opacity})`;
       });
@@ -63,94 +61,90 @@ class ChartRenderer_ChartJS extends CustomRenderer {
       }
       return {
         lineColor: lineColor,
-        fillColor: fillColor
+        fillColor: fillColor,
       };
     }
 
-    _this.chartDataSets = [];
+    this.chartDataSets = [];
 
-    _this.metricDescriptor.metricConfig.datasets.map(function(dataset, index) {
+    this.metricDescriptor.metricConfig.datasets.map((dataset, index) => {
       let color = index === 0 ? {
-        lineColor: _this.metricDescriptor.metricConfig.lineColor,
-        fillColor: _this.metricDescriptor.metricConfig.fillColor
+        lineColor: this.metricDescriptor.metricConfig.lineColor,
+        fillColor: this.metricDescriptor.metricConfig.fillColor,
       } : randomColor();
-      _this.chartDataSets.push({
+      this.chartDataSets.push({
         data: [],
         label: dataset,
         borderColor: color.lineColor,
         backgroundColor: color.fillColor,
         fill: (index === 0 ? 'start' : false),
         borderWidth: 2,
-        pointRadius: 1
+        pointRadius: 1,
       });
     });
 
-    _this.chart = new Chart(_this.control_Context, {
+    this.chart = new Chart(this.control_Context, {
       type: 'line',
       data: {
-        labels: _this.getLabels(),
-        datasets: _this.getDataSets()
+        labels: this.getLabels(),
+        datasets: this.getDataSets(),
       },
       options: {
         legend: {
           display: isMultipleDataSets,
-          position: 'bottom'
+          position: 'bottom',
         },
         scales: {
           xAxes: [{
             display: true,
             gridLines: {
-              color: _this.getGridLinesColor()
+              color: this.getGridLinesColor(),
             },
             ticks: {
               display: false,
-              max: _this.maxPeriod,
+              max: this.maxPeriod,
               min: 0,
-            }
+            },
           }],
           yAxes: [{
             display: true,
             gridLines: {
-              color: _this.getGridLinesColor()
+              color: this.getGridLinesColor(),
             },
             ticks: {
-              suggestedMin: _this.metricDescriptor.metricConfig.suggestedMin,
-              suggestedMax: _this.metricDescriptor.metricConfig.suggestedMax,
-              min: _this.metricDescriptor.metricConfig.min,
-              max: _this.metricDescriptor.metricConfig.max
-            }
-          }]
+              suggestedMin: this.metricDescriptor.metricConfig.suggestedMin,
+              suggestedMax: this.metricDescriptor.metricConfig.suggestedMax,
+              min: this.metricDescriptor.metricConfig.min,
+              max: this.metricDescriptor.metricConfig.max,
+            },
+          }],
         },
         animation: {
-          duration: 0 // general animation time
-        }
-      }
+          duration: 0, // general animation time
+        },
+      },
     });
   }
 
   getLabels() {
-    const _this = this;
-
     let res = [];
-    for (let i = 0; i < _this.maxPeriod; i++) {
+    for (let i = 0; i < this.maxPeriod; i++) {
       res.push(i);
     }
     return res;
   }
 
   getDataSets() {
-    const _this = this;
-
-    let result = Object.assign([], _this.chartDataSets);
-    result.map(function(item) {
+    let result = Object.assign([], this.chartDataSets);
+    result.map((item) => {
       item.data = [];
     });
 
     if (result.length > 0) {
       let last = 0;
 
-      _this.statData.map(function(values) {
-        values.map(function(value, index) {
+      this.statData.map((values) => {
+        values.map((value, index) => {
           result[index].data.push(value);
           if (index === 0) {
             last = value;
@@ -161,11 +155,11 @@ class ChartRenderer_ChartJS extends CustomRenderer {
       let found = false;
 
       if (last) {
-        if (_this.metricDescriptor.metricConfig.ranges) {
-          for (let i = _this.metricDescriptor.metricConfig.ranges.length - 1; i >= 0; i--) {
-            if (last >= _this.metricDescriptor.metricConfig.ranges[i].value) {
-              result[0].borderColor = _this.metricDescriptor.metricConfig.ranges[i].lineColor;
-              result[0].backgroundColor = _this.metricDescriptor.metricConfig.ranges[i].fillColor;
+        if (this.metricDescriptor.metricConfig.ranges) {
+          for (let i = this.metricDescriptor.metricConfig.ranges.length - 1; i >= 0; i--) {
+            if (last >= this.metricDescriptor.metricConfig.ranges[i].value) {
+              result[0].borderColor = this.metricDescriptor.metricConfig.ranges[i].lineColor;
+              result[0].backgroundColor = this.metricDescriptor.metricConfig.ranges[i].fillColor;
               found = true;
               break;
             }
@@ -174,8 +168,8 @@ class ChartRenderer_ChartJS extends CustomRenderer {
       }
 
       if (!found) {
-        result[0].borderColor = _this.metricDescriptor.metricConfig.lineColor;
-        result[0].backgroundColor = _this.metricDescriptor.metricConfig.fillColor;
+        result[0].borderColor = this.metricDescriptor.metricConfig.lineColor;
+        result[0].backgroundColor = this.metricDescriptor.metricConfig.fillColor;
       }
     }
 
@@ -183,43 +177,39 @@ class ChartRenderer_ChartJS extends CustomRenderer {
   }
 
   draw(datasets) {
-    const _this = this;
-
-    _this.chart.data.datasets = datasets;
-    _this.chart.update();
+    this.chart.data.datasets = datasets;
+    this.chart.update();
   }
 
   getGridLinesColor() {
-    const _this = this;
-
-    return (_this.settings.theme === 'dark' ? '#333333' : (_this.settings.theme === 'light' ? '#EEEEEE' : null));
+    return (this.settings.theme === 'dark' ? '#333333' : (this.settings.theme === 'light' ? '#EEEEEE' : null));
   }
 
   pushData(data) {
     super.pushData(data);
 
-    const _this = this;
-
-    while (_this.statData.length > _this.maxPeriod) {
-      _this.statData = _this.statData.slice(1);
+    while (this.statData.length > this.maxPeriod) {
+      this.statData = this.statData.slice(1);
     }
-    _this.statData.push(data.points);
+    this.statData.push(data.points);
 
-    const datasets = _this.getDataSets();
+    const datasets = this.getDataSets();
 
-    _this.requestAnimationFrame(function() {
-      _this.draw(datasets);
+    this.requestAnimationFrame(() => {
+      this.draw(datasets);
     });
   }
 
   setTheme(theme) {
-    const _this = this;
-
-    _this.settings.theme = theme;
-    _this.chart.options.scales.xAxes[0].gridLines.color = _this.getGridLinesColor();
-    _this.chart.options.scales.yAxes[0].gridLines.color = _this.getGridLinesColor();
-    _this.chart.update();
+    this.settings.theme = theme;
+    this.chart.options.scales.xAxes[0].gridLines.color = this.getGridLinesColor();
+    this.chart.options.scales.yAxes[0].gridLines.color = this.getGridLinesColor();
+    this.chart.update();
   }
 }
 
-if (typeof module !== 'undefined' && module.exports) module.exports = ChartRenderer_ChartJS; else window.ChartRenderer_ChartJS = ChartRenderer_ChartJS;
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = ChartRenderer_ChartJS;
+} else {
+  window.ChartRenderer_ChartJS = ChartRenderer_ChartJS;
+}

@@ -4,8 +4,6 @@ class TableRenderer extends CustomRenderer {
   constructor(container, metricDescriptor, settings) {
     super(container, metricDescriptor, settings);
 
-    const _this = this;
-
     const bodyTemplate = Handlebars.compile(`
       <table class="widget-table table table-condensed table-striped table-bordered" style="width:100%;font-size:8pt;font-family:monospace,Courier;line-height:1.2em;">
         <thead class="table-header"></thead>
@@ -13,31 +11,29 @@ class TableRenderer extends CustomRenderer {
       </table>
     `);
 
-    _this.widgetContainer.find('.widget-body').append(bodyTemplate());
+    this.widgetContainer.find('.widget-body').append(bodyTemplate());
 
-    _this.control_TableHeader = _this.control_Body.find('thead');
-    _this.control_TableBody = _this.control_Body.find('tbody');
+    this.control_TableHeader = this.control_Body.find('thead');
+    this.control_TableBody = this.control_Body.find('tbody');
   }
 
   pushData(data) {
     super.pushData(data);
 
-    const _this = this;
-
     if (data.table) {
       if (data.table.header && (data.table.header.length > 0)) {
         let tableHeader = '<tr>';
-        data.table.header.map(function(caption) {
+        data.table.header.map((caption) => {
           tableHeader += `<th>${caption}</th>`;
         });
         tableHeader += '</tr>';
-        _this.control_TableHeader.html(tableHeader);
+        this.control_TableHeader.html(tableHeader);
       }
       if (data.table.body && (data.table.body.length > 0)) {
         let tableBody = '';
-        data.table.body.map(function(row) {
+        data.table.body.map((row) => {
           tableBody += '<tr>';
-          row.map(function(cell) {
+          row.map((cell) => {
             let dom = $(`<div>${cell}</div>`);
             dom.find('script,iframe,style').remove();
             let value = dom.html();
@@ -49,12 +45,16 @@ class TableRenderer extends CustomRenderer {
           });
           tableBody += '</tr>';
         });
-        _this.control_TableBody.html(tableBody);
+        this.control_TableBody.html(tableBody);
       } else {
-        _this.control_TableBody.html('');
+        this.control_TableBody.html('');
       }
     }
   }
 }
 
-if (typeof module !== 'undefined' && module.exports) module.exports = TableRenderer; else window.TableRenderer = TableRenderer;
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = TableRenderer;
+} else {
+  window.TableRenderer = TableRenderer;
+}

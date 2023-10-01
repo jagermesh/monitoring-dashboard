@@ -6,33 +6,31 @@ class ChartRenderer_C3 extends CustomRenderer {
   constructor(container, metricDescriptor, settings) {
     super(container, metricDescriptor, settings);
 
-    const _this = this;
-
     const bodyTemplate = Handlebars.compile(`
       <div class="chart">
       </div>
     `);
 
-    _this.widgetContainer.find('.widget-body').append(bodyTemplate());
+    this.widgetContainer.find('.widget-body').append(bodyTemplate());
 
-    _this.control_Chart = _this.widgetContainer.find('.widget-body').find('.chart');
+    this.control_Chart = this.widgetContainer.find('.widget-body').find('.chart');
 
-    _this.maxPeriod = 20;
+    this.maxPeriod = 20;
 
-    _this.statData = [];
+    this.statData = [];
 
-    _this.colors = ['aqua', 'burlywood', 'deepskyblue', 'mediumslateblue', 'beige', 'honeydew', 'honeydew', 'paleturquoise'];
+    this.colors = ['aqua', 'burlywood', 'deepskyblue', 'mediumslateblue', 'beige', 'honeydew', 'honeydew', 'paleturquoise'];
 
-    _this.valueName = _this.metricDescriptor.metricInfo.metricName;
+    this.valueName = this.metricDescriptor.metricInfo.metricName;
 
-    const isMultipleDataSets = (_this.metricDescriptor.metricConfig.datasets.length > 1);
+    const isMultipleDataSets = (this.metricDescriptor.metricConfig.datasets.length > 1);
     const dataTypes = {};
-    _this.metricDescriptor.metricConfig.datasets.map(function(dataset, index) {
+    this.metricDescriptor.metricConfig.datasets.map((dataset, index) => {
       dataTypes[dataset] = (index === 0 ? 'area-spline' : 'spline');
     });
 
-    _this.chart = c3.generate({
-      bindto: _this.control_Chart[0],
+    this.chart = c3.generate({
+      bindto: this.control_Chart[0],
       data: {
         x: 'timestamp',
         xFormat: '%Y-%m-%d %H:%M:%S',
@@ -49,7 +47,7 @@ class ChartRenderer_C3 extends CustomRenderer {
         duration: 0,
       },
       legend: {
-        show: isMultipleDataSets
+        show: isMultipleDataSets,
       },
       axis: {
         x: {
@@ -57,67 +55,59 @@ class ChartRenderer_C3 extends CustomRenderer {
           tick: {
             format: '%H:%M:%S',
           },
-          show: false
+          show: false,
         },
       },
       grid: {
         x: {
-          show: true
+          show: true,
         },
         y: {
-          show: true
-        }
-      }
+          show: true,
+        },
+      },
     });
   }
 
   getAvaialbleColor(index) {
-    const _this = this;
-
-    if (index >= _this.colors.length) {
+    if (index >= this.colors.length) {
       const r = Math.floor(Math.random() * 255);
       const g = Math.floor(Math.random() * 255);
       const b = Math.floor(Math.random() * 255);
       return `rgb(${r},${g},${b})`;
     } else {
-      return _this.colors[index];
+      return this.colors[index];
     }
   }
 
   getColor(index, value) {
-    const _this = this;
-
-    if (_this.metricDescriptor.metricConfig.ranges) {
-      for (let i = _this.metricDescriptor.metricConfig.ranges.length - 1; i >= 0; i--) {
-        if (value >= _this.metricDescriptor.metricConfig.ranges[i].value) {
-          return _this.metricDescriptor.metricConfig.ranges[i].lineColor;
+    if (this.metricDescriptor.metricConfig.ranges) {
+      for (let i = this.metricDescriptor.metricConfig.ranges.length - 1; i >= 0; i--) {
+        if (value >= this.metricDescriptor.metricConfig.ranges[i].value) {
+          return this.metricDescriptor.metricConfig.ranges[i].lineColor;
         }
       }
     }
 
-    return (index === 0 ? _this.metricDescriptor.metricConfig.lineColor : _this.getAvaialbleColor(index - 1));
+    return (index === 0 ? this.metricDescriptor.metricConfig.lineColor : this.getAvaialbleColor(index - 1));
   }
 
   draw(columns, colors) {
-    const _this = this;
-
-    _this.chart.load({
+    this.chart.load({
       columns: columns,
-      colors: colors
+      colors: colors,
     });
   }
 
   pushData(data) {
     super.pushData(data);
 
-    const _this = this;
-
-    while (_this.statData.length > _this.maxPeriod) {
-      _this.statData = _this.statData.slice(1);
+    while (this.statData.length > this.maxPeriod) {
+      this.statData = this.statData.slice(1);
     }
-    _this.statData.push({
+    this.statData.push({
       x: moment().format('YYYY-MM-DD HH:mm:ss'),
-      values: data.points
+      values: data.points,
     });
 
     // let colors = {};
@@ -125,26 +115,30 @@ class ChartRenderer_C3 extends CustomRenderer {
     let colors = {};
 
     let timeStampData = ['timestamp'];
-    _this.statData.map(function(data) {
+    this.statData.map((data) => {
       timeStampData.push(data.x);
     });
     columns.push(timeStampData);
 
-    _this.metricDescriptor.metricConfig.datasets.map(function(dataset, index) {
+    this.metricDescriptor.metricConfig.datasets.map((dataset, index) => {
       let columnData = [dataset];
       let last = 0;
-      _this.statData.map(function(data) {
+      this.statData.map((data) => {
         last = data.values[index];
         columnData.push(last);
       });
       columns.push(columnData);
-      colors[dataset] = _this.getColor(index, last);
+      colors[dataset] = this.getColor(index, last);
     });
 
-    _this.requestAnimationFrame(function() {
-      _this.draw(columns, colors);
+    this.requestAnimationFrame(() => {
+      this.draw(columns, colors);
     });
   }
 }
 
-if (typeof module !== 'undefined' && module.exports) module.exports = ChartRenderer_C3; else window.ChartRenderer_C3 = ChartRenderer_C3;
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = ChartRenderer_C3;
+} else {
+  window.ChartRenderer_C3 = ChartRenderer_C3;
+}

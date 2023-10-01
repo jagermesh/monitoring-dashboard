@@ -43,19 +43,17 @@ class CustomRenderer {
   }
 
   pushData(data) {
-    const _this = this;
-
-    let title = `${data.title} (${_this.metricDescriptor.sensorInfo.sensorName})`;
-    _this.control_TitleInfo.html(title);
+    let title = `${data.title} (${this.metricDescriptor.sensorInfo.sensorName})`;
+    this.control_TitleInfo.html(title);
 
     if (data.subTitle) {
-      _this.control_SubTitle.html(data.subTitle);
+      this.control_SubTitle.html(data.subTitle);
     }
     if (data.footerTitle) {
-      _this.control_Footer_Title.html(data.footerTitle);
+      this.control_Footer_Title.html(data.footerTitle);
     }
     if (data.footerSubTitle) {
-      _this.control_Footer_SubTitle.html(data.footerSubTitle);
+      this.control_Footer_SubTitle.html(data.footerSubTitle);
     }
   }
 
@@ -64,23 +62,21 @@ class CustomRenderer {
   }
 
   requestAnimationFrame(callback, element) {
-    const _this = this;
-
     let requestAnimationFrame =
       window.requestAnimationFrame ||
       window.webkitRequestAnimationFrame ||
       window.mozRequestAnimationFrame ||
       window.oRequestAnimationFrame ||
       window.msRequestAnimationFrame ||
-      function(callback) {
+      ((callback) => {
         let currTime = new Date().getTime();
-        let timeToCall = Math.max(0, 16 - (currTime - _this.lastAnimationFramtTime));
-        let id = window.setTimeout(function() {
+        let timeToCall = Math.max(0, 16 - (currTime - this.lastAnimationFramtTime));
+        let id = window.setTimeout(() => {
           callback(currTime + timeToCall);
         }, timeToCall);
-        _this.lastAnimationFramtTime = currTime + timeToCall;
+        this.lastAnimationFramtTime = currTime + timeToCall;
         return id;
-      };
+      });
 
     return requestAnimationFrame.call(window, callback, element);
   }
@@ -90,4 +86,8 @@ class CustomRenderer {
   }
 }
 
-if (typeof module !== 'undefined' && module.exports) module.exports = CustomRenderer; else window.CustomRenderer = CustomRenderer;
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = CustomRenderer;
+} else {
+  window.CustomRenderer = CustomRenderer;
+}

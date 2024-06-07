@@ -31,7 +31,6 @@ class ProgressRenderer extends CustomRenderer {
   }
 
   pushData(data) {
-    console.log(data);
     super.pushData(data);
 
     let operations = data.operations;

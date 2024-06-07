@@ -9187,7 +9187,6 @@ class ProgressRenderer extends CustomRenderer {
   }
 
   pushData(data) {
-    console.log(data);
     super.pushData(data);
 
     let operations = data.operations;
@@ -9442,14 +9441,6 @@ $(() => {
 
   let widgetsContainer = $('div.widgets-container');
 
-  function log() {
-    if (typeof (console) != 'undefined') {
-      for (let i in arguments) {
-        console.log(arguments[i]);
-      }
-    }
-  }
-
   const renderers = {
     Chart: (document.location.search.indexOf('c3') === -1 ? ChartRenderer_ChartJS : ChartRenderer_C3),
     Progress: ProgressRenderer,
@@ -9522,38 +9513,31 @@ $(() => {
   });
 
   dataServer.on('connect', () => {
-    log('connect');
     dataServer.emit('registerObserver');
   });
 
   dataServer.on('hubOnline', () => {
-    log('online');
     indicateHubStatus(true);
   });
 
   dataServer.on('hubOffline', () => {
-    log('offline');
     indicateHubStatus(false);
   });
 
   dataServer.on('registerMetric', (metricDescriptor) => {
-    log('registerMetric', metricDescriptor);
     registerMetric(metricDescriptor);
     filter();
   });
 
   dataServer.on('unregisterMetric', (metricDescriptor) => {
-    log('unregisterMetric', metricDescriptor);
     removeMetric(metricDescriptor.metricInfo.metricUid);
   });
 
   dataServer.on('metricData', (data) => {
-    log(data);
     pushData(data.metricUid, data.metricData);
   });
 
   dataServer.on('disconnect', () => {
-    log('disconnect');
     indicateHubStatus(false);
     removeAllMetrics();
   });

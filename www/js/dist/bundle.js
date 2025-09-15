@@ -8741,6 +8741,21 @@ class CustomRenderer {
     this.control_Body = this.widgetContainer.find('.widget-body');
     this.control_Footer_Title = this.widgetContainer.find('.widget-footer-title');
     this.control_Footer_SubTitle = this.widgetContainer.find('.widget-footer-sub-title');
+    this.requestAnimationFrameFunc =
+      window.requestAnimationFrame ||
+      window.webkitRequestAnimationFrame ||
+      window.mozRequestAnimationFrame ||
+      window.oRequestAnimationFrame ||
+      window.msRequestAnimationFrame ||
+      ((callback) => {
+        let currTime = new Date().getTime();
+        let timeToCall = Math.max(0, 16 - (currTime - this.lastAnimationFramtTime));
+        let id = window.setTimeout(() => {
+          callback(currTime + timeToCall);
+        }, timeToCall);
+        this.lastAnimationFramtTime = currTime + timeToCall;
+        return id;
+      });
   }
 
   pushData(data) {
@@ -8763,23 +8778,7 @@ class CustomRenderer {
   }
 
   requestAnimationFrame(callback, element) {
-    let requestAnimationFrame =
-      window.requestAnimationFrame ||
-      window.webkitRequestAnimationFrame ||
-      window.mozRequestAnimationFrame ||
-      window.oRequestAnimationFrame ||
-      window.msRequestAnimationFrame ||
-      ((callback) => {
-        let currTime = new Date().getTime();
-        let timeToCall = Math.max(0, 16 - (currTime - this.lastAnimationFramtTime));
-        let id = window.setTimeout(() => {
-          callback(currTime + timeToCall);
-        }, timeToCall);
-        this.lastAnimationFramtTime = currTime + timeToCall;
-        return id;
-      });
-
-    return requestAnimationFrame.call(window, callback, element);
+    return this.requestAnimationFrameFunc.call(window, callback, element);
   }
 
   remove() {

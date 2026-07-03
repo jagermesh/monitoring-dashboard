@@ -25,7 +25,7 @@ class ChartRenderer_C3 extends CustomRenderer {
 
     const isMultipleDataSets = (this.metricDescriptor.metricConfig.datasets.length > 1);
     const dataTypes = {};
-    this.metricDescriptor.metricConfig.datasets.map((dataset, index) => {
+    this.metricDescriptor.metricConfig.datasets.forEach((dataset, index) => {
       dataTypes[dataset] = (index === 0 ? 'area-spline' : 'spline');
     });
 
@@ -115,15 +115,15 @@ class ChartRenderer_C3 extends CustomRenderer {
     let colors = {};
 
     let timeStampData = ['timestamp'];
-    this.statData.map((data) => {
+    this.statData.forEach((data) => {
       timeStampData.push(data.x);
     });
     columns.push(timeStampData);
 
-    this.metricDescriptor.metricConfig.datasets.map((dataset, index) => {
+    this.metricDescriptor.metricConfig.datasets.forEach((dataset, index) => {
       let columnData = [dataset];
       let last = 0;
-      this.statData.map((data) => {
+      this.statData.forEach((data) => {
         last = data.values[index];
         columnData.push(last);
       });

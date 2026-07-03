@@ -73,7 +73,7 @@ class CustomRenderer {
   }
 
   setTheme() {
-
+    //
   }
 
   requestAnimationFrame(callback, element) {

@@ -39,7 +39,7 @@ class ChartRenderer_ChartJS extends CustomRenderer {
     }
 
     if (this.metricDescriptor.metricConfig.ranges) {
-      this.metricDescriptor.metricConfig.ranges.map((range) => {
+      this.metricDescriptor.metricConfig.ranges.forEach((range) => {
         let color = new RGBColor(range.lineColor);
         range.fillColor = `rgb(${color.r},${color.g},${color.b},${opacity})`;
       });
@@ -67,7 +67,7 @@ class ChartRenderer_ChartJS extends CustomRenderer {
 
     this.chartDataSets = [];
 
-    this.metricDescriptor.metricConfig.datasets.map((dataset, index) => {
+    this.metricDescriptor.metricConfig.datasets.forEach((dataset, index) => {
       let color = index === 0 ? {
         lineColor: this.metricDescriptor.metricConfig.lineColor,
         fillColor: this.metricDescriptor.metricConfig.fillColor,
@@ -136,15 +136,15 @@ class ChartRenderer_ChartJS extends CustomRenderer {
 
   getDataSets() {
     let result = Object.assign([], this.chartDataSets);
-    result.map((item) => {
+    result.forEach((item) => {
       item.data = [];
     });
 
     if (result.length > 0) {
       let last = 0;
 
-      this.statData.map((values) => {
-        values.map((value, index) => {
+      this.statData.forEach((values) => {
+        values.forEach((value, index) => {
           result[index].data.push(value);
           if (index === 0) {
             last = value;

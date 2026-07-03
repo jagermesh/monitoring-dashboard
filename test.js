@@ -1,4 +1,4 @@
-const MonitoringDashboard = require(__dirname + '/index.js');
+const MonitoringDashboard = require(`${__dirname}/index.js`);
 
 const config = {
   dashboard: {

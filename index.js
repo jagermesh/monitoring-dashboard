@@ -20,11 +20,11 @@ class MonitoringDashboard {
     const logTag = 'DSB';
     let text = colors.yellow(`[${logTag}]`);
     if (isError) {
-      text += ' ' + colors.yellow('[ERROR]');
+      text += ` ${colors.yellow('[ERROR]')}`;
     }
-    text += ' ' + message;
+    text += ` ${message}`;
     if (attributes) {
-      text += ' ' + colors.green(JSON.stringify(attributes));
+      text += ` ${colors.green(JSON.stringify(attributes))}`;
     }
     console.log(text);
   }

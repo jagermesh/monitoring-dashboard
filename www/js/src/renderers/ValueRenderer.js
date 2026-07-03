@@ -23,7 +23,7 @@ class ValueRenderer extends CustomRenderer {
     let texts = '';
 
     if (data.values) {
-      data.values.map((value) => {
+      data.values.forEach((value) => {
         let cell = value.formatted ? value.formatted : value.raw;
         let dom = $(`<div>${cell}</div>`);
         dom.find('script,iframe,style').remove();

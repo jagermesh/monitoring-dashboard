@@ -31,7 +31,7 @@ $(() => {
   function registerMetric(metricDescriptor) {
     if (metricDescriptor.metricInfo.metricRenderer) {
       const metricRenderers = metricDescriptor.metricInfo.metricRenderer.split(',');
-      metricRenderers.map((metricRenderer) => {
+      metricRenderers.forEach((metricRenderer) => {
         if (renderers[metricRenderer]) {
           const metricDescriptorCopy = JSON.parse(JSON.stringify(metricDescriptor));
           metricDescriptorCopy.metricInfo.metricRenderer = metricRenderer;
@@ -53,7 +53,7 @@ $(() => {
   }
 
   function pushData(metricUid, metricData) {
-    widgets.map((widget) => {
+    widgets.forEach((widget) => {
       if (widget.metricDescriptor.metricInfo.metricUid == metricUid) {
         widget.pushData(metricData);
       }
@@ -123,7 +123,7 @@ $(() => {
     let keyword = $('.action-search').val().toLowerCase();
     let rendererName = $('.action-filter-by-renderer-name.active').attr('data-renderer-name');
     $('#mainContainer .widget').each(function() {
-      let scope = $('.widget-header', $(this)).text().toLowerCase() + ' ' + $('.widget-footer', $(this)).text().toLowerCase();
+      let scope = `${$('.widget-header', $(this)).text().toLowerCase()} ${$('.widget-footer', $(this)).text().toLowerCase()}`;
       if (scope.indexOf(keyword) == -1) {
         $(this).hide();
       } else {
@@ -156,7 +156,7 @@ $(() => {
     $('.action-switch-theme').removeClass('active');
     $(this).addClass('active');
     $('body').attr('data-theme', $(this).attr('data-theme'));
-    widgets.map((widget) => {
+    widgets.forEach((widget) => {
       widget.setTheme(getTheme());
     });
   });

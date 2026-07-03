@@ -1,15 +1,15 @@
-const gulp = require('gulp');
-const concat = require('gulp-concat');
-const eslint = require('gulp-eslint');
-const terser = require('gulp-terser');
-const rename = require('gulp-rename');
-const merge = require('merge-stream');
+import gulp from 'gulp';
+import eslint from 'gulp-eslint-new';
+import concat from 'gulp-concat';
+import terser from 'gulp-terser';
+import rename from 'gulp-rename';
+import merge from 'merge-stream';
 
 const configs = {
   eslint: {
     src: [
       '*.js',
-      'www/src/**/*.js',
+      'www/js/src/**/*.js',
     ],
   },
   concat: [{
@@ -74,4 +74,5 @@ gulp.task('eslint', () => {
     .pipe(eslint.failAfterError());
 });
 
-gulp.task('build', gulp.series('eslint', 'concat', 'terser'));
+gulp.task('build',
+  gulp.series('eslint', 'concat', 'terser'));

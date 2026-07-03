@@ -23,7 +23,7 @@ class TableRenderer extends CustomRenderer {
     if (data.table) {
       if (data.table.header && (data.table.header.length > 0)) {
         let tableHeader = '<tr>';
-        data.table.header.map((caption) => {
+        data.table.header.forEach((caption) => {
           tableHeader += `<th>${caption}</th>`;
         });
         tableHeader += '</tr>';
@@ -31,9 +31,9 @@ class TableRenderer extends CustomRenderer {
       }
       if (data.table.body && (data.table.body.length > 0)) {
         let tableBody = '';
-        data.table.body.map((row) => {
+        data.table.body.forEach((row) => {
           tableBody += '<tr>';
-          row.map((cell) => {
+          row.forEach((cell) => {
             let dom = $(`<div>${cell}</div>`);
             dom.find('script,iframe,style').remove();
             let value = dom.html();

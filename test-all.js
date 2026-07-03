@@ -1,5 +1,5 @@
 const MonitoringHub = require('monitoring-hub');
-const MonitoringDashboard = require(__dirname + '/index.js');
+const MonitoringDashboard = require(`${__dirname}/index.js`);
 const {
   MonitoringSensor,
 } = require('monitoring-sensor');

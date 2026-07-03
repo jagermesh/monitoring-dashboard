@@ -8774,7 +8774,7 @@ class CustomRenderer {
   }
 
   setTheme() {
-
+    //
   }
 
   requestAnimationFrame(callback, element) {
@@ -8819,7 +8819,7 @@ class ChartRenderer_C3 extends CustomRenderer {
 
     const isMultipleDataSets = (this.metricDescriptor.metricConfig.datasets.length > 1);
     const dataTypes = {};
-    this.metricDescriptor.metricConfig.datasets.map((dataset, index) => {
+    this.metricDescriptor.metricConfig.datasets.forEach((dataset, index) => {
       dataTypes[dataset] = (index === 0 ? 'area-spline' : 'spline');
     });
 
@@ -8909,15 +8909,15 @@ class ChartRenderer_C3 extends CustomRenderer {
     let colors = {};
 
     let timeStampData = ['timestamp'];
-    this.statData.map((data) => {
+    this.statData.forEach((data) => {
       timeStampData.push(data.x);
     });
     columns.push(timeStampData);
 
-    this.metricDescriptor.metricConfig.datasets.map((dataset, index) => {
+    this.metricDescriptor.metricConfig.datasets.forEach((dataset, index) => {
       let columnData = [dataset];
       let last = 0;
-      this.statData.map((data) => {
+      this.statData.forEach((data) => {
         last = data.values[index];
         columnData.push(last);
       });
@@ -8987,7 +8987,7 @@ class ChartRenderer_ChartJS extends CustomRenderer {
     }
 
     if (this.metricDescriptor.metricConfig.ranges) {
-      this.metricDescriptor.metricConfig.ranges.map((range) => {
+      this.metricDescriptor.metricConfig.ranges.forEach((range) => {
         let color = new RGBColor(range.lineColor);
         range.fillColor = `rgb(${color.r},${color.g},${color.b},${opacity})`;
       });
@@ -9015,7 +9015,7 @@ class ChartRenderer_ChartJS extends CustomRenderer {
 
     this.chartDataSets = [];
 
-    this.metricDescriptor.metricConfig.datasets.map((dataset, index) => {
+    this.metricDescriptor.metricConfig.datasets.forEach((dataset, index) => {
       let color = index === 0 ? {
         lineColor: this.metricDescriptor.metricConfig.lineColor,
         fillColor: this.metricDescriptor.metricConfig.fillColor,
@@ -9084,15 +9084,15 @@ class ChartRenderer_ChartJS extends CustomRenderer {
 
   getDataSets() {
     let result = Object.assign([], this.chartDataSets);
-    result.map((item) => {
+    result.forEach((item) => {
       item.data = [];
     });
 
     if (result.length > 0) {
       let last = 0;
 
-      this.statData.map((values) => {
-        values.map((value, index) => {
+      this.statData.forEach((values) => {
+        values.forEach((value, index) => {
           result[index].data.push(value);
           if (index === 0) {
             last = value;
@@ -9208,7 +9208,7 @@ class ProgressRenderer extends CustomRenderer {
 
     let operations = data.operations;
     let text = '';
-    operations.map((operation) => {
+    operations.forEach((operation) => {
       if (operation.total > 0) {
         operation.percent = (operation.current / operation.total * 100).toFixed(2);
       } else {
@@ -9252,7 +9252,7 @@ class TableRenderer extends CustomRenderer {
     if (data.table) {
       if (data.table.header && (data.table.header.length > 0)) {
         let tableHeader = '<tr>';
-        data.table.header.map((caption) => {
+        data.table.header.forEach((caption) => {
           tableHeader += `<th>${caption}</th>`;
         });
         tableHeader += '</tr>';
@@ -9260,9 +9260,9 @@ class TableRenderer extends CustomRenderer {
       }
       if (data.table.body && (data.table.body.length > 0)) {
         let tableBody = '';
-        data.table.body.map((row) => {
+        data.table.body.forEach((row) => {
           tableBody += '<tr>';
-          row.map((cell) => {
+          row.forEach((cell) => {
             let dom = $(`<div>${cell}</div>`);
             dom.find('script,iframe,style').remove();
             let value = dom.html();
@@ -9313,7 +9313,7 @@ class ValueRenderer extends CustomRenderer {
     let texts = '';
 
     if (data.values) {
-      data.values.map((value) => {
+      data.values.forEach((value) => {
         let cell = value.formatted ? value.formatted : value.raw;
         let dom = $(`<div>${cell}</div>`);
         dom.find('script,iframe,style').remove();
@@ -9479,7 +9479,7 @@ $(() => {
   function registerMetric(metricDescriptor) {
     if (metricDescriptor.metricInfo.metricRenderer) {
       const metricRenderers = metricDescriptor.metricInfo.metricRenderer.split(',');
-      metricRenderers.map((metricRenderer) => {
+      metricRenderers.forEach((metricRenderer) => {
         if (renderers[metricRenderer]) {
           const metricDescriptorCopy = JSON.parse(JSON.stringify(metricDescriptor));
           metricDescriptorCopy.metricInfo.metricRenderer = metricRenderer;
@@ -9501,7 +9501,7 @@ $(() => {
   }
 
   function pushData(metricUid, metricData) {
-    widgets.map((widget) => {
+    widgets.forEach((widget) => {
       if (widget.metricDescriptor.metricInfo.metricUid == metricUid) {
         widget.pushData(metricData);
       }
@@ -9571,7 +9571,7 @@ $(() => {
     let keyword = $('.action-search').val().toLowerCase();
     let rendererName = $('.action-filter-by-renderer-name.active').attr('data-renderer-name');
     $('#mainContainer .widget').each(function() {
-      let scope = $('.widget-header', $(this)).text().toLowerCase() + ' ' + $('.widget-footer', $(this)).text().toLowerCase();
+      let scope = `${$('.widget-header', $(this)).text().toLowerCase()} ${$('.widget-footer', $(this)).text().toLowerCase()}`;
       if (scope.indexOf(keyword) == -1) {
         $(this).hide();
       } else {
@@ -9604,7 +9604,7 @@ $(() => {
     $('.action-switch-theme').removeClass('active');
     $(this).addClass('active');
     $('body').attr('data-theme', $(this).attr('data-theme'));
-    widgets.map((widget) => {
+    widgets.forEach((widget) => {
       widget.setTheme(getTheme());
     });
   });

@@ -35,7 +35,7 @@ class ProgressRenderer extends CustomRenderer {
 
     let operations = data.operations;
     let text = '';
-    operations.map((operation) => {
+    operations.forEach((operation) => {
       if (operation.total > 0) {
         operation.percent = (operation.current / operation.total * 100).toFixed(2);
       } else {

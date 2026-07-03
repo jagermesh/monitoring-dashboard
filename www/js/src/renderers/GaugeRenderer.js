@@ -83,6 +83,14 @@ class GaugeRenderer extends CustomRenderer {
       });
     }
   }
+
+  remove() {
+    if (this.chart) {
+      this.chart.destroy();
+      this.chart = null;
+    }
+    super.remove();
+  }
 }
 
 if (typeof module !== 'undefined' && module.exports) {

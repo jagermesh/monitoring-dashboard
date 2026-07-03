@@ -188,10 +188,10 @@ class ChartRenderer_ChartJS extends CustomRenderer {
   pushData(data) {
     super.pushData(data);
 
+    this.statData.push(data.points);
     while (this.statData.length > this.maxPeriod) {
       this.statData = this.statData.slice(1);
     }
-    this.statData.push(data.points);
 
     const datasets = this.getDataSets();
 
@@ -205,6 +205,15 @@ class ChartRenderer_ChartJS extends CustomRenderer {
     this.chart.options.scales.xAxes[0].gridLines.color = this.getGridLinesColor();
     this.chart.options.scales.yAxes[0].gridLines.color = this.getGridLinesColor();
     this.chart.update();
+  }
+
+  remove() {
+    if (this.chart) {
+      this.chart.destroy();
+      this.chart = null;
+    }
+    this.statData = [];
+    super.remove();
   }
 }
 

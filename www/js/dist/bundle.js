@@ -8896,13 +8896,13 @@ class ChartRenderer_C3 extends CustomRenderer {
   pushData(data) {
     super.pushData(data);
 
-    while (this.statData.length > this.maxPeriod) {
-      this.statData = this.statData.slice(1);
-    }
     this.statData.push({
       x: moment().format('YYYY-MM-DD HH:mm:ss'),
       values: data.points,
     });
+    while (this.statData.length > this.maxPeriod) {
+      this.statData = this.statData.slice(1);
+    }
 
     // let colors = {};
     let columns = [];
@@ -8928,6 +8928,15 @@ class ChartRenderer_C3 extends CustomRenderer {
     this.requestAnimationFrame(() => {
       this.draw(columns, colors);
     });
+  }
+
+  remove() {
+    if (this.chart) {
+      this.chart.destroy();
+      this.chart = null;
+    }
+    this.statData = [];
+    super.remove();
   }
 }
 
@@ -9127,10 +9136,10 @@ class ChartRenderer_ChartJS extends CustomRenderer {
   pushData(data) {
     super.pushData(data);
 
+    this.statData.push(data.points);
     while (this.statData.length > this.maxPeriod) {
       this.statData = this.statData.slice(1);
     }
-    this.statData.push(data.points);
 
     const datasets = this.getDataSets();
 
@@ -9144,6 +9153,15 @@ class ChartRenderer_ChartJS extends CustomRenderer {
     this.chart.options.scales.xAxes[0].gridLines.color = this.getGridLinesColor();
     this.chart.options.scales.yAxes[0].gridLines.color = this.getGridLinesColor();
     this.chart.update();
+  }
+
+  remove() {
+    if (this.chart) {
+      this.chart.destroy();
+      this.chart = null;
+    }
+    this.statData = [];
+    super.remove();
   }
 }
 
@@ -9411,6 +9429,14 @@ class GaugeRenderer extends CustomRenderer {
         this.draw(columns, colors);
       });
     }
+  }
+
+  remove() {
+    if (this.chart) {
+      this.chart.destroy();
+      this.chart = null;
+    }
+    super.remove();
   }
 }
 

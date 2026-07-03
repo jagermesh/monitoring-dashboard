@@ -102,13 +102,13 @@ class ChartRenderer_C3 extends CustomRenderer {
   pushData(data) {
     super.pushData(data);
 
-    while (this.statData.length > this.maxPeriod) {
-      this.statData = this.statData.slice(1);
-    }
     this.statData.push({
       x: moment().format('YYYY-MM-DD HH:mm:ss'),
       values: data.points,
     });
+    while (this.statData.length > this.maxPeriod) {
+      this.statData = this.statData.slice(1);
+    }
 
     // let colors = {};
     let columns = [];
@@ -134,6 +134,15 @@ class ChartRenderer_C3 extends CustomRenderer {
     this.requestAnimationFrame(() => {
       this.draw(columns, colors);
     });
+  }
+
+  remove() {
+    if (this.chart) {
+      this.chart.destroy();
+      this.chart = null;
+    }
+    this.statData = [];
+    super.remove();
   }
 }
 

@@ -14,9 +14,9 @@
     "eslint": "^8.7.0",
     "merge-stream": "2.0.0",
     "terser": "5.10.0",
-    "monitoring-hub": "^1.0",
-    "monitoring-progress-logger": "^1.0",
-    "monitoring-sensor": "^1.0"
+    "monitoring-hub": "1.0.26",
+    "monitoring-progress-logger": "1.0.15",
+    "monitoring-sensor": "1.0.33"
   },
   "dependencies": {
     "basic-auth": "2.0.1",
